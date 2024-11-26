@@ -38,14 +38,11 @@ export function ProjectLocationSize({ updateProjectData }: ProjectLocationSizePr
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="location">Project Location</Label>
-          <AddressAutocomplete
-            value={location}
-            onChange={handleLocationChange}
-            placeholder="Enter project address"
-          />
-        </div>
+        <AddressAutocomplete
+          value={location}
+          onChange={handleLocationChange}
+          placeholder="Enter project address"
+        />
 
         <div className="space-y-2">
           <Label htmlFor="size">Project Size</Label>

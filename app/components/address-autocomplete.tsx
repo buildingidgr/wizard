@@ -5,67 +5,73 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 interface AddressAutocompleteProps {
-  onAddressSelect: (address: string) => void
+  value: string
+  onChange: (address: string) => void
+  placeholder?: string
 }
 
-export function AddressAutocomplete({ onAddressSelect }: AddressAutocompleteProps) {
-  const [inputValue, setInputValue] = useState('')
-  const autoCompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
-  const inputRef = useRef<HTMLInputElement | null>(null)
+export function AddressAutocomplete({ value, onChange, placeholder }: AddressAutocompleteProps) {
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const autocompleteRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const loadGoogleMapsScript = () => {
-      const script = document.createElement('script')
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`
-      script.async = true
-      script.defer = true
-      document.head.appendChild(script)
-      return script
+    // This is a mock function. In a real application, you would call an API here.
+    const fetchSuggestions = async (input: string) => {
+      // Simulating API call delay
+      await new Promise(resolve => setTimeout(resolve, 300))
+      return [
+        `${input} Street, City`,
+        `${input} Avenue, Town`,
+        `${input} Road, Village`
+      ]
     }
 
-    const script = loadGoogleMapsScript()
+    if (value.length > 2) {
+      fetchSuggestions(value).then(setSuggestions)
+    } else {
+      setSuggestions([])
+    }
+  }, [value])
 
-    script.addEventListener('load', initAutocomplete)
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (autocompleteRef.current && !autocompleteRef.current.contains(event.target as Node)) {
+        setSuggestions([])
+      }
+    }
 
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      script.removeEventListener('load', initAutocomplete)
-      document.head.removeChild(script)
+      document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
 
-  const initAutocomplete = () => {
-    if (!inputRef.current) return
-
-    autoCompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
-      types: ['address'],
-      componentRestrictions: { country: 'us' },
-      fields: ['formatted_address'],
-    })
-
-    autoCompleteRef.current.addListener('place_changed', handlePlaceSelect)
-  }
-
-  const handlePlaceSelect = () => {
-    const addressObject = autoCompleteRef.current?.getPlace()
-    const address = addressObject?.formatted_address
-    if (address) {
-      setInputValue(address)
-      onAddressSelect(address)
-    }
-  }
-
   return (
-    <div className="space-y-2">
-      <Label htmlFor="address">Project Location</Label>
+    <div ref={autocompleteRef} className="relative">
+      <Label htmlFor="address">Address</Label>
       <Input
-        ref={inputRef}
-        type="text"
         id="address"
-        placeholder="Enter project address"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        className="w-full"
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
       />
+      {suggestions.length > 0 && (
+        <ul className="absolute z-10 w-full bg-white border border-gray-300 mt-1 rounded-md shadow-lg">
+          {suggestions.map((suggestion, index) => (
+            <li
+              key={index}
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              onClick={() => {
+                onChange(suggestion)
+                setSuggestions([])
+              }}
+            >
+              {suggestion}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
