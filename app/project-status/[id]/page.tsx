@@ -14,7 +14,7 @@ import { Progress } from "@/components/ui/progress"
 
 type ProjectStatus = "In Progress" | "Completed"
 
-export default function ProjectStatus({ params }: { params: { id: string } }) {
+export default function ProjectStatusPage({ params }: { params: { id: string } }) {
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>("In Progress")
   const [messages, setMessages] = useState([
     { sender: "John Doe", content: "Hello, I'm interested in your project. Can you provide more details?", timestamp: "2023-06-01 10:00 AM" },
