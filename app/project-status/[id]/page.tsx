@@ -7,13 +7,15 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/app/components/ui/alert-dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs"
-import { Progress } from "@/app/components/ui/progress"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Progress } from "@/components/ui/progress"
+
+type ProjectStatus = "In Progress" | "Completed"
 
 export default function ProjectStatus({ params }: { params: { id: string } }) {
-  const [projectStatus, setProjectStatus] = useState<"In Progress" | "Completed">("In Progress")
+  const [projectStatus, setProjectStatus] = useState<ProjectStatus>("In Progress")
   const [messages, setMessages] = useState([
     { sender: "John Doe", content: "Hello, I'm interested in your project. Can you provide more details?", timestamp: "2023-06-01 10:00 AM" },
     { sender: "You", content: "The project involves designing a bridge over a small river. What specific details would you like to know?", timestamp: "2023-06-01 10:15 AM" },
