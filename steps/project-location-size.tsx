@@ -1,33 +1,56 @@
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+"use client"
 
-export function ProjectLocationSize({ updateProjectData }) {
+import { useState } from "react"
+import { AddressAutocomplete } from "@/app/components/address-autocomplete"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+
+interface ProjectLocationSizeProps {
+  updateProjectData: (data: any) => void
+}
+
+export function ProjectLocationSize({ updateProjectData }: ProjectLocationSizeProps) {
+  const [location, setLocation] = useState("")
+  const [size, setSize] = useState("")
+  const [siteDescription, setSiteDescription] = useState("")
+
+  const handleLocationSelect = (address: string) => {
+    setLocation(address)
+    updateProjectData({ location: address })
+  }
+
+  const handleSizeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSize(e.target.value)
+    updateProjectData({ size: e.target.value })
+  }
+
+  const handleSiteDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSiteDescription(e.target.value)
+    updateProjectData({ siteDescription: e.target.value })
+  }
+
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold mb-4">Project Location and Size</h2>
-      <div>
+    <div className="space-y-6">
+      <div className="space-y-2">
         <Label htmlFor="location">Project Location</Label>
-        <Input
-          id="location"
-          placeholder="Enter the project location"
-          onChange={(e) => updateProjectData({ location: e.target.value })}
-        />
+        <AddressAutocomplete onAddressSelect={handleLocationSelect} />
       </div>
-      <div>
-        <Label htmlFor="size">Approximate Size (in square feet or acres)</Label>
-        <Input
-          id="size"
-          placeholder="e.g., 2000 sq ft or 5 acres"
-          onChange={(e) => updateProjectData({ size: e.target.value })}
-        />
-      </div>
-      <div>
-        <Label htmlFor="description">Brief Description of the Site</Label>
+      <div className="space-y-2">
+        <Label htmlFor="size">Project Size</Label>
         <Textarea
-          id="description"
-          placeholder="Describe the current condition of the site, any existing structures, terrain, etc."
-          onChange={(e) => updateProjectData({ siteDescription: e.target.value })}
+          id="size"
+          placeholder="Enter the size of your project (e.g., square footage, acreage)"
+          value={size}
+          onChange={handleSizeChange}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="siteDescription">Site Description</Label>
+        <Textarea
+          id="siteDescription"
+          placeholder="Describe the site (e.g., terrain, existing structures, access)"
+          value={siteDescription}
+          onChange={handleSiteDescriptionChange}
         />
       </div>
     </div>

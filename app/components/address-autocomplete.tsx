@@ -2,70 +2,66 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 
 interface AddressAutocompleteProps {
-  value: string
-  onChange: (address: string) => void
-  placeholder?: string
+  onAddressSelect: (address: string) => void
 }
 
-export function AddressAutocomplete({ value, onChange, placeholder }: AddressAutocompleteProps) {
+export function AddressAutocomplete({ onAddressSelect }: AddressAutocompleteProps) {
+  const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
   const autocompleteRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // This is a mock function. In a real application, you would call an API here.
-    const fetchSuggestions = async (input: string) => {
-      // Simulating API call delay
-      await new Promise(resolve => setTimeout(resolve, 300))
-      return [
-        `${input} Street, City`,
-        `${input} Avenue, Town`,
-        `${input} Road, Village`
+    if (query.length > 2) {
+      // In a real application, you would call an API here
+      // For this example, we'll use a mock function
+      const mockSuggestions = [
+        query + " Street, City, Country",
+        query + " Avenue, Town, State",
+        query + " Road, Village, Region",
       ]
-    }
-
-    if (value.length > 2) {
-      fetchSuggestions(value).then(setSuggestions)
+      setSuggestions(mockSuggestions)
     } else {
       setSuggestions([])
     }
-  }, [value])
+  }, [query])
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    function handleClickOutside(event: MouseEvent) {
       if (autocompleteRef.current && !autocompleteRef.current.contains(event.target as Node)) {
         setSuggestions([])
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener("mousedown", handleClickOutside)
     }
   }, [])
 
+  const handleSelect = (address: string) => {
+    setQuery(address)
+    onAddressSelect(address)
+    setSuggestions([])
+  }
+
   return (
     <div ref={autocompleteRef} className="relative">
-      <Label htmlFor="address">Address</Label>
       <Input
-        id="address"
         type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Enter address"
+        className="w-full"
       />
       {suggestions.length > 0 && (
-        <ul className="absolute z-10 w-full bg-white border border-gray-300 mt-1 rounded-md shadow-lg">
+        <ul className="absolute z-10 w-full bg-background border border-input mt-1 rounded-md shadow-lg">
           {suggestions.map((suggestion, index) => (
             <li
               key={index}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                onChange(suggestion)
-                setSuggestions([])
-              }}
+              className="px-4 py-2 hover:bg-accent cursor-pointer"
+              onClick={() => handleSelect(suggestion)}
             >
               {suggestion}
             </li>
