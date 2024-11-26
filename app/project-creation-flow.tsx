@@ -25,13 +25,29 @@ const steps = [
 
 const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL || 'https://webhook-service-production-dfad.up.railway.app/'
 
+interface ProjectData {
+  projectType?: string;
+  location?: string;
+  size?: string;
+  siteDescription?: string;
+  goals?: string;
+  requirements?: string;
+  budget?: string;
+  timeline?: string;
+  additionalDetails?: string;
+  concerns?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+}
+
 export function ProjectCreationFlow() {
   const [currentStep, setCurrentStep] = useState(0)
-  const [projectData, setProjectData] = useState({})
+  const [projectData, setProjectData] = useState<ProjectData>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
-  const updateProjectData = (newData) => {
+  const updateProjectData = (newData: Partial<ProjectData>) => {
     setProjectData((prevData) => ({ ...prevData, ...newData }))
   }
 
@@ -68,7 +84,7 @@ export function ProjectCreationFlow() {
       goals: projectData.goals,
       requirements: projectData.requirements,
       budget: {
-        amount: parseFloat(projectData.budget) || null,
+        amount: parseFloat(projectData.budget || '0'),
         currency: "USD"
       },
       timeline: {
@@ -116,7 +132,7 @@ export function ProjectCreationFlow() {
       case 0:
         return <ProjectTypeSelection updateProjectData={updateProjectData} />
       case 1:
-return <ProjectLocationSize updateProjectData={updateProjectData} />
+        return <ProjectLocationSize updateProjectData={updateProjectData} />
       case 2:
         return <ProjectGoalsRequirements updateProjectData={updateProjectData} />
       case 3:
