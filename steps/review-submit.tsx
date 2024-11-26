@@ -1,19 +1,59 @@
-export function ReviewSubmit({ projectData }) {
+import React from 'react'
+import { Card, CardContent, CardTitle } from "@/components/ui/card"
+
+interface ReviewSubmitProps {
+  projectData: any
+}
+
+export function ReviewSubmit({ projectData }: ReviewSubmitProps) {
   return (
-    <div>
-      <h2 className="text-lg font-semibold mb-4">Review Your Project Details</h2>
-      <div className="space-y-4">
-        {Object.entries(projectData).map(([key, value]) => (
-          <div key={key}>
-            <h3 className="font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}</h3>
-            <p className="text-muted-foreground">{value}</p>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold">Review & Submit</h2>
+      <Card>
+        <CardContent>
+          <CardTitle className="mb-4">Project Summary</CardTitle>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold">Project Type:</h3>
+              <p>{projectData.projectType}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Location:</h3>
+              <p>{projectData.location}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Size:</h3>
+              <p>{projectData.size}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Goals:</h3>
+              <p>{projectData.goals}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Requirements:</h3>
+              <p>{projectData.requirements}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Budget:</h3>
+              <p>${projectData.budget}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Timeline:</h3>
+              <p>{projectData.timeline}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Additional Details:</h3>
+              <p>{projectData.additionalDetails}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Contact Information:</h3>
+              <p>Name: {projectData.name}</p>
+              <p>Email: {projectData.email}</p>
+              <p>Phone: {projectData.phone}</p>
+            </div>
           </div>
-        ))}
-      </div>
-      <p className="mt-6 text-sm text-muted-foreground">
-        Please review the information above. If everything looks correct, click "Submit" to send your project details to
-        our team of civil engineers.
-      </p>
+        </CardContent>
+      </Card>
     </div>
   )
 }
