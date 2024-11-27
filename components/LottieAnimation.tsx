@@ -1,18 +1,16 @@
 import React from 'react'
-import Lottie from 'lottie-react'
+import Lottie, { LottieComponentProps } from 'lottie-react'
 
-interface LottieAnimationProps {
-  animationData: any
-  loop?: boolean
-  autoplay?: boolean
-  style?: React.CSSProperties
+interface LottieAnimationProps extends Omit<LottieComponentProps, 'animationData'> {
+  animationData: any;
 }
 
 const LottieAnimation: React.FC<LottieAnimationProps> = ({ 
   animationData, 
   loop = true, 
   autoplay = true, 
-  style 
+  style,
+  ...props
 }) => {
   return (
     <Lottie 
@@ -20,6 +18,7 @@ const LottieAnimation: React.FC<LottieAnimationProps> = ({
       loop={loop} 
       autoplay={autoplay} 
       style={style}
+      {...props}
     />
   )
 }
