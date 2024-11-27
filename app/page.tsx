@@ -18,6 +18,7 @@ export default function Home() {
   const [projectDetails, setProjectDetails] = React.useState<any>(null)
   const [contactDetails, setContactDetails] = React.useState<{ fullName: string; email: string; phone: string } | null>(null)
   const [isVerifying, setIsVerifying] = React.useState(false)
+  const [isComplete, setIsComplete] = React.useState(false)
 
   const handleSelectProjectType = (type: string) => {
     setProjectType(type)
@@ -40,11 +41,14 @@ export default function Home() {
   const handleVerificationComplete = () => {
     // Here you would typically submit all the collected data to your backend
     console.log('All data collected and verified:', { projectType, address, coordinates, projectDetails, contactDetails })
+    setIsComplete(true)
     // Navigate to a confirmation page or show a success message
   }
 
   const handleBack = () => {
-    if (isVerifying) {
+    if (isComplete) {
+      setIsComplete(false)
+    } else if (isVerifying) {
       setIsVerifying(false)
     } else if (contactDetails) {
       setContactDetails(null)
@@ -59,6 +63,7 @@ export default function Home() {
   }
 
   const getCurrentStep = () => {
+    if (isComplete) return 'complete'
     if (!projectType) return 'type'
     if (!address) return 'address'
     if (!projectDetails) return 'details'
@@ -72,7 +77,16 @@ export default function Home() {
         <main className="flex-grow p-6">
           <div className="max-w-2xl mx-auto">
             <FormInstructions step={getCurrentStep()} />
-            {isVerifying ? (
+            {isComplete ? (
+              <Card className="w-full">
+                <CardHeader>
+                  <CardTitle>Submission Complete</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>Thank you for submitting your project details. We'll review your information and get back to you soon.</p>
+                </CardContent>
+              </Card>
+            ) : isVerifying ? (
               <PinVerificationForm 
                 phoneNumber={contactDetails!.phone}
                 onVerificationComplete={handleVerificationComplete}
