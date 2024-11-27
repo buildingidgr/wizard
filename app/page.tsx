@@ -9,6 +9,7 @@ import PinnedProjectType from './components/PinnedProjectType'
 import PinnedMap from './components/PinnedMap'
 import PinnedProjectDetails from './components/PinnedProjectDetails'
 import FormInstructions from './components/FormInstructions'
+import TopBar from './components/TopBar'
 
 export default function Home() {
   const [projectType, setProjectType] = React.useState<string | null>(null)
@@ -48,43 +49,46 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen">
-      <main className="flex-grow p-6">
-        <div className="max-w-3xl mx-auto">
-          <FormInstructions step={getCurrentStep()} />
-          {projectDetails ? (
-            <ContactDetailsForm onBack={handleBack} />
-          ) : address && projectType ? (
-            <ProjectDetailsForm 
-              projectType={projectType} 
-              address={address} 
-              onBack={handleBack}
-              onSubmit={handleProjectDetailsSubmit}
-            />
-          ) : projectType ? (
-            <ProjectAddressForm 
-              projectType={projectType} 
-              onBack={handleBack}
-              onAddressConfirm={handleAddressConfirm}
-            />
-          ) : (
-            <ProjectTypeSelector onSelectProjectType={handleSelectProjectType} />
-          )}
-        </div>
-      </main>
-      {projectType && (
-        <aside className="lg:w-64 p-6 border-t lg:border-l lg:border-t-0">
-          <div className="lg:sticky lg:top-6 space-y-6">
-            <PinnedProjectType projectType={projectType} currentStep={getCurrentStep()} />
-            {address && coordinates && (
-              <PinnedMap address={address} lat={coordinates.lat} lng={coordinates.lng} />
-            )}
-            {projectDetails && (
-              <PinnedProjectDetails details={projectDetails} />
+    <div className="flex flex-col min-h-screen">
+      <TopBar />
+      <div className="flex flex-col lg:flex-row flex-grow">
+        <main className="flex-grow p-6">
+          <div className="max-w-2xl mx-auto">
+            <FormInstructions step={getCurrentStep()} />
+            {projectDetails ? (
+              <ContactDetailsForm onBack={handleBack} />
+            ) : address && projectType ? (
+              <ProjectDetailsForm 
+                projectType={projectType} 
+                address={address} 
+                onBack={handleBack}
+                onSubmit={handleProjectDetailsSubmit}
+              />
+            ) : projectType ? (
+              <ProjectAddressForm 
+                projectType={projectType} 
+                onBack={handleBack}
+                onAddressConfirm={handleAddressConfirm}
+              />
+            ) : (
+              <ProjectTypeSelector onSelectProjectType={handleSelectProjectType} />
             )}
           </div>
-        </aside>
-      )}
+        </main>
+        {projectType && (
+          <aside className="lg:w-96 p-6 border-t lg:border-l lg:border-t-0">
+            <div className="lg:sticky lg:top-6 space-y-6">
+              <PinnedProjectType projectType={projectType} currentStep={getCurrentStep()} />
+              {address && coordinates && (
+                <PinnedMap address={address} lat={coordinates.lat} lng={coordinates.lng} />
+              )}
+              {projectDetails && (
+                <PinnedProjectDetails details={projectDetails} />
+              )}
+            </div>
+          </aside>
+        )}
+      </div>
     </div>
   )
 }
