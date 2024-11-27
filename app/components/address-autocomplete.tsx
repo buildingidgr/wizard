@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react'
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import React, { useRef, useEffect, useState } from 'react'
+import { Input } from '@/app/components/ui/input'
 
 interface AddressAutocompleteProps {
   onAddressSelect: (address: string) => void
@@ -14,59 +13,43 @@ export function AddressAutocomplete({ onAddressSelect }: AddressAutocompleteProp
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
-    const loadGoogleMapsScript = () => {
-      const script = document.createElement('script')
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`
-      script.async = true
-      script.defer = true
-      document.head.appendChild(script)
-      return script
+    if (!window.google) {
+      console.error('Google Maps JavaScript API not loaded')
+      return
     }
 
-    const script = loadGoogleMapsScript()
+    const options = {
+      fields: ["formatted_address", "geometry", "name"],
+      strictBounds: false,
+      types: ["address"],
+    }
 
-    script.addEventListener('load', initAutocomplete)
+    if (inputRef.current) {
+      autoCompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, options)
+
+      autoCompleteRef.current.addListener("place_changed", () => {
+        const place = autoCompleteRef.current?.getPlace()
+        if (place && place.formatted_address) {
+          onAddressSelect(place.formatted_address)
+        }
+      })
+    }
 
     return () => {
-      script.removeEventListener('load', initAutocomplete)
-      document.head.removeChild(script)
+      if (autoCompleteRef.current) {
+        window.google.maps.event.clearInstanceListeners(autoCompleteRef.current)
+      }
     }
-  }, [])
-
-  const initAutocomplete = () => {
-    if (!inputRef.current) return
-
-    autoCompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
-      types: ['address'],
-      componentRestrictions: { country: 'us' },
-      fields: ['formatted_address'],
-    })
-
-    autoCompleteRef.current.addListener('place_changed', handlePlaceSelect)
-  }
-
-  const handlePlaceSelect = () => {
-    const addressObject = autoCompleteRef.current?.getPlace()
-    const address = addressObject?.formatted_address
-    if (address) {
-      setInputValue(address)
-      onAddressSelect(address)
-    }
-  }
+  }, [onAddressSelect])
 
   return (
-    <div className="space-y-2">
-      <Label htmlFor="address">Project Location</Label>
-      <Input
-        ref={inputRef}
-        type="text"
-        id="address"
-        placeholder="Enter project address"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        className="w-full"
-      />
-    </div>
+    <Input
+      ref={inputRef}
+      type="text"
+      value={inputValue}
+      onChange={(e) => setInputValue(e.target.value)}
+      placeholder="Enter an address"
+    />
   )
 }
 
