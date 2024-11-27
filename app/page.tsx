@@ -9,7 +9,6 @@ import PinnedProjectType from './components/PinnedProjectType'
 import PinnedMap from './components/PinnedMap'
 import PinnedProjectDetails from './components/PinnedProjectDetails'
 import FormInstructions from './components/FormInstructions'
-import TopBar from './components/TopBar'
 
 export default function Home() {
   const [projectType, setProjectType] = React.useState<string | null>(null)
@@ -50,7 +49,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <TopBar />
       <div className="flex flex-col lg:flex-row flex-grow">
         <main className="flex-grow p-6">
           <div className="max-w-2xl mx-auto">
