@@ -1,139 +1,73 @@
 "use client"
 
 import { useState } from "react"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { CheckCircle2, XCircle } from 'lucide-react'
+import { Input } from "@/components/ui/input"
 
-// Hypothetical SMS verification service
-const sendVerificationCode = async (phoneNumber: string) => {
-  // In a real implementation, this would call an API to send an SMS
-  console.log(`Sending verification code to ${phoneNumber}`)
-  return Math.floor(100000 + Math.random() * 900000).toString()
+interface ContactDetailsProps {
+  updateProjectData: (data: { name?: string; email?: string; phone?: string }) => void
 }
 
-const verifyCode = async (phoneNumber: string, code: string) => {
-  // In a real implementation, this would call an API to verify the code
-  console.log(`Verifying code ${code} for ${phoneNumber}`)
-  return Math.random() > 0.2 // 80% success rate for demonstration
-}
-
-const isValidPhoneNumber = (number: string) => {
-  // This is a basic validation, you might want to use a more robust solution
-  return /^\+?[1-9]\d{1,14}$/.test(number)
-}
-
-export function ContactDetails({ updateProjectData }) {
+export function ContactDetails({ updateProjectData }: ContactDetailsProps) {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
-  const [phoneNumber, setPhoneNumber] = useState("")
-  const [verificationCode, setVerificationCode] = useState("")
-  const [isVerified, setIsVerified] = useState(false)
-  const [isVerificationSent, setIsVerificationSent] = useState(false)
-  const [verificationError, setVerificationError] = useState("")
+  const [phone, setPhone] = useState("")
 
-  const handleSendVerification = async () => {
-    if (phoneNumber && isValidPhoneNumber(phoneNumber)) {
-      setIsVerificationSent(true)
-      setVerificationError("")
-      await sendVerificationCode(phoneNumber)
-    } else {
-      setVerificationError("Please enter a valid phone number.")
-    }
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value)
+    updateProjectData({ name: event.target.value })
   }
 
-  const handleVerifyCode = async () => {
-    if (phoneNumber && verificationCode) {
-      const isValid = await verifyCode(phoneNumber, verificationCode)
-      if (isValid) {
-        setIsVerified(true)
-        setVerificationError("")
-        updateProjectData({ name, email, phoneNumber })
-      } else {
-        setVerificationError("Invalid verification code. Please try again.")
-      }
-    } else {
-      setVerificationError("Please enter the verification code.")
-    }
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value)
+    updateProjectData({ email: event.target.value })
+  }
+
+  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(event.target.value)
+    updateProjectData({ phone: event.target.value })
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold mb-4">Contact Details</h2>
+    <div className="space-y-6">
       <div>
-        <Label htmlFor="name">Full Name</Label>
-        <Input
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter your full name"
-        />
+        <h2 className="text-2xl font-bold">Contact Details</h2>
+        <p className="text-muted-foreground">Provide your contact information for project communication</p>
       </div>
-      <div>
-        <Label htmlFor="email">Email Address</Label>
-        <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email address"
-        />
-      </div>
-      <div>
-        <Label htmlFor="phone">Phone Number</Label>
-        <div className="flex space-x-2">
+
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="name">Full Name</Label>
+          <Input
+            id="name"
+            placeholder="Enter your full name"
+            value={name}
+            onChange={handleNameChange}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email">Email Address</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="Enter your email address"
+            value={email}
+            onChange={handleEmailChange}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="phone">Phone Number</Label>
           <Input
             id="phone"
             type="tel"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
             placeholder="Enter your phone number"
-            className="flex-grow"
+            value={phone}
+            onChange={handlePhoneChange}
           />
-          <Button
-            onClick={handleSendVerification}
-            disabled={isVerified || !phoneNumber || !isValidPhoneNumber(phoneNumber)}
-          >
-            {isVerificationSent ? "Resend" : "Send"} Code
-          </Button>
         </div>
       </div>
-      {isVerificationSent && !isVerified && (
-        <div>
-          <Label htmlFor="verificationCode">Verification Code</Label>
-          <div className="flex space-x-2">
-            <Input
-              id="verificationCode"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-              placeholder="Enter verification code"
-              className="flex-grow"
-            />
-            <Button
-              onClick={handleVerifyCode}
-              disabled={!verificationCode}
-            >
-              Verify
-            </Button>
-          </div>
-        </div>
-      )}
-      {isVerified && (
-        <Alert>
-          <CheckCircle2 className="h-4 w-4" />
-          <AlertTitle>Success</AlertTitle>
-          <AlertDescription>Your contact details have been verified and saved.</AlertDescription>
-        </Alert>
-      )}
-      {verificationError && (
-        <Alert variant="destructive">
-          <XCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{verificationError}</AlertDescription>
-        </Alert>
-      )}
     </div>
   )
 }
