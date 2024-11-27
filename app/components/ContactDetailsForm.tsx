@@ -1,7 +1,6 @@
 'use client'
 
-import React from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -10,22 +9,39 @@ import { ArrowLeft } from 'lucide-react'
 
 interface ContactDetailsFormProps {
   onBack: () => void;
+  onSubmit: (details: { fullName: string; email: string; phone: string }) => void;
 }
 
-const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({ onBack }) => {
-  const router = useRouter()
-  const [contactDetails, setContactDetails] = React.useState({
+const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({ onBack, onSubmit }) => {
+  const [contactDetails, setContactDetails] = useState({
     fullName: '',
     email: '',
     phone: ''
   })
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Submitting contact details:', contactDetails)
-    // Here you would typically send this data to your backend
-    // For now, we'll just log it and pretend to navigate to a confirmation page
-    router.push('/submission-confirmation')
+    setError(null)
+
+    try {
+      const response = await fetch('/api/send-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumber: contactDetails.phone }),
+      })
+
+      if (response.ok) {
+        onSubmit(contactDetails)
+      } else {
+        const data = await response.json()
+        setError(data.error || 'Failed to send verification code. Please try again.')
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.')
+    }
   }
 
   return (
@@ -77,8 +93,9 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({ onBack }) => {
               required
             />
           </div>
+          {error && <p className="text-sm text-red-500">{error}</p>}
           <div className="flex justify-end">
-            <Button type="submit">Submit Contact Details</Button>
+            <Button type="submit">Submit and Verify</Button>
           </div>
         </form>
       </CardContent>

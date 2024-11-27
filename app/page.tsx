@@ -5,6 +5,7 @@ import ProjectTypeSelector from './components/ProjectTypeSelector'
 import ProjectAddressForm from './components/ProjectAddressForm'
 import ProjectDetailsForm from './components/ProjectDetailsForm'
 import ContactDetailsForm from './components/ContactDetailsForm'
+import PinVerificationForm from './components/PinVerificationForm'
 import PinnedProjectType from './components/PinnedProjectType'
 import PinnedMap from './components/PinnedMap'
 import PinnedProjectDetails from './components/PinnedProjectDetails'
@@ -15,6 +16,8 @@ export default function Home() {
   const [address, setAddress] = React.useState<string | null>(null)
   const [coordinates, setCoordinates] = React.useState<{ lat: number; lng: number } | null>(null)
   const [projectDetails, setProjectDetails] = React.useState<any>(null)
+  const [contactDetails, setContactDetails] = React.useState<{ fullName: string; email: string; phone: string } | null>(null)
+  const [isVerifying, setIsVerifying] = React.useState(false)
 
   const handleSelectProjectType = (type: string) => {
     setProjectType(type)
@@ -29,8 +32,23 @@ export default function Home() {
     setProjectDetails(details)
   }
 
+  const handleContactDetailsSubmit = (details: { fullName: string; email: string; phone: string }) => {
+    setContactDetails(details)
+    setIsVerifying(true)
+  }
+
+  const handleVerificationComplete = () => {
+    // Here you would typically submit all the collected data to your backend
+    console.log('All data collected and verified:', { projectType, address, coordinates, projectDetails, contactDetails })
+    // Navigate to a confirmation page or show a success message
+  }
+
   const handleBack = () => {
-    if (projectDetails) {
+    if (isVerifying) {
+      setIsVerifying(false)
+    } else if (contactDetails) {
+      setContactDetails(null)
+    } else if (projectDetails) {
       setProjectDetails(null)
     } else if (address) {
       setAddress(null)
@@ -44,7 +62,8 @@ export default function Home() {
     if (!projectType) return 'type'
     if (!address) return 'address'
     if (!projectDetails) return 'details'
-    return 'contact'
+    if (!contactDetails || isVerifying) return 'contact'
+    return 'complete'
   }
 
   return (
@@ -53,8 +72,21 @@ export default function Home() {
         <main className="flex-grow p-6">
           <div className="max-w-2xl mx-auto">
             <FormInstructions step={getCurrentStep()} />
-            {projectDetails ? (
-              <ContactDetailsForm onBack={handleBack} />
+            {isVerifying ? (
+              <PinVerificationForm 
+                phoneNumber={contactDetails!.phone}
+                onVerificationComplete={handleVerificationComplete}
+              />
+            ) : contactDetails ? (
+              <PinVerificationForm 
+                phoneNumber={contactDetails.phone}
+                onVerificationComplete={handleVerificationComplete}
+              />
+            ) : projectDetails ? (
+              <ContactDetailsForm 
+                onBack={handleBack}
+                onSubmit={handleContactDetailsSubmit}
+              />
             ) : address && projectType ? (
               <ProjectDetailsForm 
                 projectType={projectType} 
