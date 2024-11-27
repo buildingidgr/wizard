@@ -35,7 +35,7 @@ const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({ projectType, ad
   }
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full max-w-3xl mx-auto">
       <CardHeader className="space-y-1">
         <div className="flex items-center">
           <Button variant="ghost" onClick={onBack} className="mr-2">
@@ -44,7 +44,7 @@ const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({ projectType, ad
           <div>
             <CardTitle className="text-2xl">Project Details</CardTitle>
             <CardDescription>
-              Provide information about your {projectType} project at {address}
+              Provide information about your project at {address}
             </CardDescription>
           </div>
         </div>

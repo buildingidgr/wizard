@@ -29,7 +29,7 @@ const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, on
   }
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full max-w-3xl mx-auto">
       <CardHeader className="space-y-1">
         <div className="flex items-center">
           <Button variant="ghost" onClick={onBack} className="mr-2">
@@ -38,7 +38,7 @@ const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, on
           <div>
             <CardTitle className="text-2xl">Project Location</CardTitle>
             <CardDescription>
-              Enter and confirm the address for your {projectType} project
+              Enter and confirm the address for your project
             </CardDescription>
           </div>
         </div>
