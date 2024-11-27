@@ -1,47 +1,83 @@
-import Image from "next/image"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import React from 'react'
+import { Card, CardContent, CardTitle } from "@/components/ui/card"
 
-export function ReviewSubmit({ projectData }) {
-  const formatKey = (key: string) => {
-    return key.split(/(?=[A-Z])/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-  }
+interface ProjectData {
+  projectType?: string;
+  location?: string;
+  size?: string;
+  siteDescription?: string;
+  goals?: string;
+  requirements?: string;
+  budget?: string;
+  timeline?: string;
+  additionalDetails?: string;
+  concerns?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+}
 
-  const renderValue = (value: any) => {
-    if (typeof value === 'object' && value !== null) {
-      return (
-        <ul className="list-disc list-inside">
-          {Object.entries(value).map(([subKey, subValue]) => (
-            <li key={subKey}>
-              <span className="font-medium">{formatKey(subKey)}:</span> {renderValue(subValue)}
-            </li>
-          ))}
-        </ul>
-      )
-    }
-    return String(value)
-  }
+interface ReviewSubmitProps {
+  projectData: ProjectData;
+}
 
+export function ReviewSubmit({ projectData }: ReviewSubmitProps) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold mb-4">Review Your Project Details</h2>
-      <div className="flex flex-col md:flex-row gap-4">
-        <ScrollArea className="flex-1 h-[60vh]">
-          <div className="space-y-6 pr-4">
-            {Object.entries(projectData).map(([key, value]) => (
-              <div key={key} className="border-b pb-4">
-                <h3 className="font-medium text-lg">{formatKey(key)}</h3>
-                <div className="text-muted-foreground">{renderValue(value)}</div>
-              </div>
-            ))}
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold">Review & Submit</h2>
+      <Card>
+        <CardContent>
+          <CardTitle className="mb-4">Project Summary</CardTitle>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold">Project Type:</h3>
+              <p>{projectData.projectType}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Location:</h3>
+              <p>{projectData.location}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Size:</h3>
+              <p>{projectData.size}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Site Description:</h3>
+              <p>{projectData.siteDescription}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Goals:</h3>
+              <p>{projectData.goals}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Requirements:</h3>
+              <p>{projectData.requirements}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Budget:</h3>
+              <p>${projectData.budget}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Timeline:</h3>
+              <p>{projectData.timeline}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Additional Details:</h3>
+              <p>{projectData.additionalDetails}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Concerns:</h3>
+              <p>{projectData.concerns}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Contact Information:</h3>
+              <p>Name: {projectData.name}</p>
+              <p>Email: {projectData.email}</p>
+              <p>Phone: {projectData.phone}</p>
+            </div>
           </div>
-        </ScrollArea>
-        <div className="flex-1 flex items-center justify-center">
-          <Image src="/placeholder.svg?height=300&width=300" alt="Review and Submit Illustration" width={300} height={300} className="rounded-lg" />
-        </div>
-      </div>
-      <p className="mt-6 text-sm text-muted-foreground">
-        Please review all the information above carefully. If everything looks correct, click "Submit" to send your project details to our team of civil engineers. If you need to make any changes, use the "Previous" button to navigate back to the relevant sections.
-      </p>
+        </CardContent>
+      </Card>
     </div>
   )
 }
