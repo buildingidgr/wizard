@@ -1,228 +1,211 @@
 "use client"
 
-import { useState } from "react"
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ProjectTypeSelection } from "@/app/steps/project-type-selection"
-import { ProjectLocationSize } from "@/app/steps/project-location-size"
-import { ProjectGoalsRequirements } from "@/app/steps/project-goals-requirements"
-import { BudgetTimeline } from "@/app/steps/budget-timeline"
-import { AdditionalDetails } from "@/app/steps/additional-details"
-import { ReviewSubmit } from "@/app/steps/review-submit"
-import { ContactDetails } from "@/app/steps/contact-details"
-import { TopBar } from "@/app/components/top-bar"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { AddressAutocomplete } from '@/components/address-autocomplete'
 
-const steps = [
-  "Project Type",
-  "Location & Size",
-  "Goals & Requirements",
-  "Budget & Timeline",
-  "Additional Details",
-  "Contact Details",
-  "Review & Submit"
-]
-
-const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL || 'https://webhook-service-production-dfad.up.railway.app/'
-
-interface ProjectData {
-  projectType?: string;
-  location?: string;
-  size?: string;
-  siteDescription?: string;
-  goals?: string;
-  requirements?: string;
-  budget?: string;
-  timeline?: string;
-  additionalDetails?: string;
-  concerns?: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-}
-
-export function ProjectCreationFlow() {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [projectData, setProjectData] = useState<ProjectData>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+export default function ProjectCreationFlow() {
   const router = useRouter()
+  const [step, setStep] = useState(1)
+  const [projectData, setProjectData] = useState({
+    projectName: '',
+    projectType: '',
+    description: '',
+    location: '',
+    size: '',
+    budget: '',
+    timeline: '',
+    additionalDetails: ''
+  })
 
-  const updateProjectData = (newData: Partial<ProjectData>) => {
-    setProjectData((prevData) => ({ ...prevData, ...newData }))
+  const updateProjectData = (field: string, value: string) => {
+    setProjectData(prevData => ({
+      ...prevData,
+      [field]: value
+    }))
   }
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1)
+    if (step < 4) {
+      setStep(step + 1)
+    } else {
+      handleSubmit()
     }
   }
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1)
     }
   }
 
   const handleSubmit = async () => {
-    setIsSubmitting(true)
-    const projectId = `PROJ-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+    // Here you would typically send the project data to your backend
+    console.log('Submitting project:', projectData)
     
-    const formattedData = {
-      projectId,
-      projectType: projectData.projectType,
-      location: {
-        address: projectData.location,
-        coordinates: {
-          lat: null,
-          lng: null
-        }
-      },
-      size: {
-        description: projectData.size,
-        details: projectData.siteDescription
-      },
-      goals: projectData.goals,
-      requirements: projectData.requirements,
-      budget: {
-        amount: parseFloat(projectData.budget || '0'),
-        currency: "USD"
-      },
-      timeline: {
-        duration: projectData.timeline,
-        preferredStartDate: null
-      },
-      additionalDetails: projectData.additionalDetails,
-      concerns: projectData.concerns,
-      contact: {
-        name: projectData.name,
-        email: projectData.email,
-        phone: projectData.phone
-      },
-      submissionDate: new Date().toISOString(),
-      status: "pending"
-    }
-
-    try {
-      const response = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formattedData),
-      })
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-
-      const result = await response.json()
-      console.log('Success:', result)
-      
-      router.push(`/thank-you?id=${projectId}&status=pending&interested=3`)
-    } catch (error) {
-      console.error('Error:', error)
-      alert('There was an error submitting your project. Please try again.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 0:
-        return <ProjectTypeSelection updateProjectData={updateProjectData} />
-      case 1:
-        return <ProjectLocationSize updateProjectData={updateProjectData} />
-      case 2:
-        return <ProjectGoalsRequirements updateProjectData={updateProjectData} />
-      case 3:
-        return <BudgetTimeline updateProjectData={updateProjectData} />
-      case 4:
-        return <AdditionalDetails updateProjectData={updateProjectData} />
-      case 5:
-        return <ContactDetails updateProjectData={updateProjectData} />
-      case 6:
-        return <ReviewSubmit projectData={projectData} />
-      default:
-        return null
-    }
+    // For now, we'll just log the data and redirect to the projects page
+    router.push('/projects')
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar />
-      <div className="w-full bg-background border-b">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <p className="text-lg text-muted-foreground">
-            This wizard will guide you through the process of defining your civil engineering project. We'll collect details about your project type, location, goals, budget, and timeline. Once submitted, our platform will match your project with qualified professionals who can bid on your job. You'll then be able to review proposals and choose the best engineer for your needs.
-          </p>
+    <div className="max-w-4xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Create New Project</h1>
+      
+      {step === 1 && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Project Basics</h2>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="projectName">Project Name</Label>
+              <Input
+                id="projectName"
+                value={projectData.projectName}
+                onChange={(e) => updateProjectData('projectName', e.target.value)}
+                placeholder="Enter project name"
+              />
+            </div>
+            <div>
+              <Label htmlFor="projectType">Project Type</Label>
+              <Select onValueChange={(value) => updateProjectData('projectType', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select project type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="residential">Residential</SelectItem>
+                  <SelectItem value="commercial">Commercial</SelectItem>
+                  <SelectItem value="industrial">Industrial</SelectItem>
+                  <SelectItem value="infrastructure">Infrastructure</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="description">Project Description</Label>
+              <Textarea
+                id="description"
+                value={projectData.description}
+                onChange={(e) => updateProjectData('description', e.target.value)}
+                placeholder="Describe your project"
+              />
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="w-full max-w-5xl mx-auto px-4 py-6">
-        <Card className="border-none shadow-none bg-card">
-          <CardHeader>
-            <CardTitle>Create New Project</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-8">
-            <div className="space-y-6">
-              <div className="flex justify-center">
-                <div className="flex items-center gap-x-6 px-4">
-                  {steps.map((step, index) => (
-                    <div key={index} className="flex items-center">
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          currentStep >= index 
-                            ? 'bg-primary text-primary-foreground' 
-                            : 'bg-muted text-muted-foreground'
-                        }`}
-                      >
-                        {index + 1}
-                      </div>
-                      {index < steps.length - 1 && (
-                        <div className="w-12 h-1 bg-muted mx-2"></div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="relative h-2 bg-muted rounded-full">
-                <div
-                  className="absolute h-2 bg-primary rounded-full transition-all duration-300 ease-in-out"
-                  style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-                ></div>
-              </div>
+      )}
+
+      {step === 2 && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Location & Size</h2>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="location">Project Location</Label>
+              <AddressAutocomplete
+                onAddressSelect={(address) => updateProjectData('location', address)}
+              />
             </div>
-            <div className="mt-8">
-              {renderStep()}
+            <div>
+              <Label htmlFor="size">Project Size (sq ft)</Label>
+              <Input
+                id="size"
+                type="number"
+                value={projectData.size}
+                onChange={(e) => updateProjectData('size', e.target.value)}
+                placeholder="Enter project size"
+              />
             </div>
-          </CardContent>
-          <CardFooter className="flex flex-col sm:flex-row justify-between gap-4 pt-8">
-            <Button 
-              onClick={handlePrevious} 
-              disabled={currentStep === 0 || isSubmitting} 
-              variant="outline" 
-              className="w-full sm:w-auto"
-            >
-              Previous
-            </Button>
-            {currentStep === steps.length - 1 ? (
-              <Button 
-                onClick={handleSubmit} 
-                disabled={isSubmitting}
-                className="w-full sm:w-auto"
-              >
-                {isSubmitting ? 'Submitting...' : 'Submit'}
-              </Button>
-            ) : (
-              <Button
-                onClick={handleNext}
-                className="w-full sm:w-auto"
-              >
-                Next
-              </Button>
-            )}
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Budget & Timeline</h2>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="budget">Estimated Budget ($)</Label>
+              <Input
+                id="budget"
+                type="number"
+                value={projectData.budget}
+                onChange={(e) => updateProjectData('budget', e.target.value)}
+                placeholder="Enter estimated budget"
+              />
+            </div>
+            <div>
+              <Label htmlFor="timeline">Project Timeline</Label>
+              <Select onValueChange={(value) => updateProjectData('timeline', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select project timeline" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0-3 months">0-3 months</SelectItem>
+                  <SelectItem value="3-6 months">3-6 months</SelectItem>
+                  <SelectItem value="6-12 months">6-12 months</SelectItem>
+                  <SelectItem value="1-2 years">1-2 years</SelectItem>
+                  <SelectItem value="2+ years">2+ years</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {step === 4 && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Review & Submit</h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold">Project Name:</h3>
+              <p>{projectData.projectName}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Project Type:</h3>
+              <p>{projectData.projectType}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Description:</h3>
+              <p>{projectData.description}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Location:</h3>
+              <p>{projectData.location}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Size:</h3>
+              <p>{projectData.size} sq ft</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Budget:</h3>
+              <p>${projectData.budget}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Timeline:</h3>
+              <p>{projectData.timeline}</p>
+            </div>
+            <div>
+              <Label htmlFor="additionalDetails">Additional Details</Label>
+              <Textarea
+                id="additionalDetails"
+                value={projectData.additionalDetails}
+                onChange={(e) => updateProjectData('additionalDetails', e.target.value)}
+                placeholder="Any additional information about your project"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-6 flex justify-between">
+        {step > 1 && (
+          <Button onClick={handleBack}>Back</Button>
+        )}
+        <Button onClick={handleNext}>
+          {step < 4 ? 'Next' : 'Submit Project'}
+        </Button>
       </div>
     </div>
   )
