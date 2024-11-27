@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from 'lucide-react'
+import PhoneInput from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 
 interface ContactDetailsFormProps {
   onBack: () => void;
@@ -23,6 +25,11 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({ onBack, onSubmi
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (!isValidPhoneNumber(contactDetails.phone)) {
+      setError('Please enter a valid phone number')
+      return
+    }
 
     try {
       const response = await fetch('/api/send-verification', {
@@ -42,6 +49,11 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({ onBack, onSubmi
     } catch (err) {
       setError('An error occurred. Please try again.')
     }
+  }
+
+  const isValidPhoneNumber = (phoneNumber: string) => {
+    const phoneNumberPattern = /^\+[1-9]\d{1,14}$/
+    return phoneNumberPattern.test(phoneNumber)
   }
 
   return (
@@ -84,13 +96,13 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({ onBack, onSubmi
           </div>
           <div className="space-y-2">
             <Label htmlFor="phone">Mobile Phone Number</Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="Enter your mobile phone number"
+            <PhoneInput
+              international
+              countryCallingCodeEditable={false}
+              defaultCountry="US"
               value={contactDetails.phone}
-              onChange={(e) => setContactDetails({ ...contactDetails, phone: e.target.value })}
-              required
+              onChange={(value) => setContactDetails({ ...contactDetails, phone: value || '' })}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}

@@ -75,3 +75,36 @@
   }
 }
 
+/* Phone Input Styles */
+.PhoneInput {
+  display: flex;
+  align-items: center;
+}
+
+.PhoneInputCountry {
+  margin-right: 0.5rem;
+}
+
+.PhoneInputCountrySelect {
+  background-color: hsl(var(--input));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.PhoneInputInput {
+  flex: 1;
+  background-color: hsl(var(--input));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.PhoneInputInput:focus {
+  outline: none;
+  ring: 2px solid hsl(var(--ring));
+  ring-offset: 2px;
+}
+
