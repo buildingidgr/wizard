@@ -2,9 +2,14 @@
 
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
 
 interface PinVerificationFormProps {
   phoneNumber: string;
@@ -37,6 +42,11 @@ const PinVerificationForm: React.FC<PinVerificationFormProps> = ({ phoneNumber, 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (pin.length !== 6) {
+      setError('Please enter a 6-digit PIN')
+      return
+    }
 
     try {
       const response = await fetch('/api/verify-pin', {
@@ -78,6 +88,7 @@ const PinVerificationForm: React.FC<PinVerificationFormProps> = ({ phoneNumber, 
         setCanRequestNewPin(false)
         setTimeUntilNewRequest(30)
         setError(null)
+        setPin('')
 
         // Reset the timer
         const newRequestTime = Date.now()
@@ -110,16 +121,25 @@ const PinVerificationForm: React.FC<PinVerificationFormProps> = ({ phoneNumber, 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="pin">6-Digit PIN</Label>
-            <Input
-              id="pin"
-              type="text"
-              inputMode="numeric"
-              pattern="\d{6}"
+            <InputOTP
               maxLength={6}
-              placeholder="Enter 6-digit PIN"
               value={pin}
-              onChange={(e) => setPin(e.target.value)}
-              required
+              onChange={(value) => setPin(value)}
+              render={({ slots }) => (
+                <>
+                  <InputOTPGroup>
+                    {slots.slice(0, 3).map((slot, index) => (
+                      <InputOTPSlot key={index} {...slot} />
+                    ))}
+                  </InputOTPGroup>
+                  <InputOTPSeparator />
+                  <InputOTPGroup>
+                    {slots.slice(3).map((slot, index) => (
+                      <InputOTPSlot key={index + 3} {...slot} />
+                    ))}
+                  </InputOTPGroup>
+                </>
+              )}
             />
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}

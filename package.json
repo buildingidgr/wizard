@@ -22,7 +22,8 @@
     "react-phone-number-input": "^3.3.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
-    "twilio": "^4.19.0"
+    "twilio": "^4.19.0",
+    "input-otp": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
