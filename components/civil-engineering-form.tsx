@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 
 const formSchema = z.object({
   projectType: z.enum(["residential", "commercial", "industrial", "infrastructure"]),
@@ -19,6 +19,7 @@ type FormValues = z.infer<typeof formSchema>
 
 export function CivilEngineeringForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { toast } = useToast()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
