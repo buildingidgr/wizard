@@ -1,32 +1,67 @@
+"use client"
+
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import Image from "next/image"
+import { Card, CardContent } from "@/components/ui/card"
 
 const projectTypes = [
-  { id: "residential", label: "Residential Building", image: "/placeholder.svg?height=100&width=100" },
-  { id: "commercial", label: "Commercial Building", image: "/placeholder.svg?height=100&width=100" },
-  { id: "infrastructure", label: "Infrastructure (Roads, Bridges, etc.)", image: "/placeholder.svg?height=100&width=100" },
-  { id: "landscaping", label: "Landscaping and Site Development", image: "/placeholder.svg?height=100&width=100" },
-  { id: "renovation", label: "Renovation or Remodeling", image: "/placeholder.svg?height=100&width=100" },
-  { id: "other", label: "Other (Please specify in Additional Details)", image: "/placeholder.svg?height=100&width=100" },
+  {
+    id: "residential",
+    title: "Residential",
+    description: "Single-family homes, apartments, or residential complexes"
+  },
+  {
+    id: "commercial",
+    title: "Commercial",
+    description: "Office buildings, retail spaces, or commercial developments"
+  },
+  {
+    id: "industrial",
+    title: "Industrial",
+    description: "Manufacturing facilities, warehouses, or industrial complexes"
+  },
+  {
+    id: "infrastructure",
+    title: "Infrastructure",
+    description: "Roads, bridges, utilities, or public works projects"
+  }
 ]
 
-export function ProjectTypeSelection({ updateProjectData }) {
+interface ProjectTypeSelectionProps {
+  updateProjectData: (data: { projectType: string }) => void
+}
+
+export function ProjectTypeSelection({ updateProjectData }: ProjectTypeSelectionProps) {
   return (
-    <div>
-      <h2 className="text-lg font-semibold mb-4">Select Your Project Type</h2>
-      <RadioGroup onValueChange={(value) => updateProjectData({ projectType: value })}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {projectTypes.map((type) => (
-            <div key={type.id} className="flex items-center space-x-3 border rounded-lg p-4">
-              <RadioGroupItem value={type.id} id={type.id} />
-              <Label htmlFor={type.id} className="flex items-center space-x-3 cursor-pointer">
-                <Image src={type.image} alt={type.label} width={100} height={100} className="rounded-md" />
-                <span>{type.label}</span>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold">Select Project Type</h2>
+        <p className="text-muted-foreground">Choose the category that best describes your project</p>
+      </div>
+      
+      <RadioGroup
+        defaultValue="residential"
+        onValueChange={(value) => updateProjectData({ projectType: value })}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+      >
+        {projectTypes.map((type) => (
+          <Card key={type.id} className="relative">
+            <CardContent className="pt-6">
+              <RadioGroupItem
+                value={type.id}
+                id={type.id}
+                className="absolute right-4 top-4"
+              />
+              <Label
+                htmlFor={type.id}
+                className="block cursor-pointer"
+              >
+                <div className="font-semibold mb-2">{type.title}</div>
+                <p className="text-sm text-muted-foreground">{type.description}</p>
               </Label>
-            </div>
-          ))}
-        </div>
+            </CardContent>
+          </Card>
+        ))}
       </RadioGroup>
     </div>
   )
