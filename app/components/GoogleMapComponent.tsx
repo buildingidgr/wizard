@@ -2,37 +2,52 @@
 
 import React from 'react'
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
+import { Input } from "@/components/ui/input"
 
 interface GoogleMapComponentProps {
-  address: string
+  onAddressSelect: (address: string, lat: number, lng: number) => void
 }
 
-const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ address }) => {
+const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ onAddressSelect }) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
     libraries: ['places'],
   })
+
+  const [center, setCenter] = React.useState({ lat: 0, lng: 0 })
+  const [address, setAddress] = React.useState('')
+  const autocompleteRef = React.useRef<google.maps.places.Autocomplete | null>(null)
 
   const mapContainerStyle = {
     width: '100%',
     height: '100%'
   }
 
-  const [center, setCenter] = React.useState({ lat: 0, lng: 0 })
+  const handlePlaceSelect = () => {
+    const place = autocompleteRef.current?.getPlace()
+    if (place && place.geometry && place.geometry.location) {
+      const lat = place.geometry.location.lat()
+      const lng = place.geometry.location.lng()
+      setCenter({ lat, lng })
+      setAddress(place.formatted_address || '')
+      onAddressSelect(place.formatted_address || '', lat, lng)
+    }
+  }
 
   React.useEffect(() => {
-    if (isLoaded && !loadError && address) {
-      const geocoder = new window.google.maps.Geocoder()
-      geocoder.geocode({ address: address }, (results, status) => {
-        if (status === 'OK' && results && results[0]) {
-          const { lat, lng } = results[0].geometry.location
-          setCenter({ lat: lat(), lng: lng() })
-        } else {
-          console.error('Geocode was not successful for the following reason: ' + status)
-        }
-      })
+    if (isLoaded && !loadError) {
+      const autocomplete = new window.google.maps.places.Autocomplete(
+        document.getElementById('address-input') as HTMLInputElement,
+        { types: ['address'] }
+      )
+      autocompleteRef.current = autocomplete
+      autocomplete.addListener('place_changed', handlePlaceSelect)
+
+      return () => {
+        window.google.maps.event.clearInstanceListeners(autocomplete)
+      }
     }
-  }, [address, isLoaded, loadError])
+  }, [isLoaded, loadError])
 
   if (loadError) {
     return <div className="h-full flex items-center justify-center">Error loading maps</div>
@@ -43,13 +58,24 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ address }) => {
   }
 
   return (
-    <GoogleMap
-      mapContainerStyle={mapContainerStyle}
-      center={center}
-      zoom={15}
-    >
-      {center.lat !== 0 && center.lng !== 0 && <Marker position={center} />}
-    </GoogleMap>
+    <div className="space-y-4">
+      <Input
+        id="address-input"
+        placeholder="Enter project address"
+        value={address}
+        onChange={(e) => setAddress(e.target.value)}
+        className="w-full"
+      />
+      <div className="h-[400px] rounded-lg overflow-hidden">
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          center={center}
+          zoom={15}
+        >
+          {center.lat !== 0 && center.lng !== 0 && <Marker position={center} />}
+        </GoogleMap>
+      </div>
+    </div>
   )
 }
 
