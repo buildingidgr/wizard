@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from 'lucide-react'
+import GoogleMapComponent from './GoogleMapComponent'
 
 interface ProjectAddressFormProps {
   projectType: string;
@@ -22,14 +23,21 @@ const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, on
     zipCode: '',
     country: ''
   })
+  const [showMap, setShowMap] = React.useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    setShowMap(true)
+  }
+
+  const handleConfirm = () => {
     // Here you would typically send this data to your backend or state management
-    console.log('Submitting address:', address)
+    console.log('Confirming address:', address)
     // For now, we'll just log it and pretend to navigate to a next step
     router.push('/project-summary')
   }
+
+  const fullAddress = `${address.street}, ${address.city}, ${address.state} ${address.zipCode}, ${address.country}`
 
   return (
     <Card className="w-full max-w-3xl mx-auto">
@@ -104,10 +112,23 @@ const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, on
           </div>
           <div className="flex justify-end">
             <Button type="submit" className="w-32">
-              Continue
+              Show on Map
             </Button>
           </div>
         </form>
+        {showMap && (
+          <div className="mt-6 space-y-4">
+            <GoogleMapComponent address={fullAddress} />
+            <div className="flex justify-between">
+              <Button onClick={() => setShowMap(false)} variant="outline">
+                Edit Address
+              </Button>
+              <Button onClick={handleConfirm}>
+                Confirm Location
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   )
