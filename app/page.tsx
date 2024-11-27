@@ -140,7 +140,7 @@ export default function Home() {
             {renderStep()}
           </div>
         </main>
-        {(step !== 'intro' || step === 'type') && (
+        {step !== 'intro' && (
           <aside className="lg:w-96 p-6 border-t lg:border-l lg:border-t-0">
             <div className="lg:sticky lg:top-6 space-y-6">
               <PinnedProjectType projectType={projectType || 'Not selected'} />
