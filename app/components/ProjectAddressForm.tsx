@@ -9,7 +9,7 @@ import GoogleMapComponent from './GoogleMapComponent'
 interface ProjectAddressFormProps {
   projectType: string;
   onBack: () => void;
-  onAddressConfirm: (address: string) => void;
+  onAddressConfirm: (address: string, lat: number, lng: number) => void;
 }
 
 const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, onBack, onAddressConfirm }) => {
@@ -25,11 +25,11 @@ const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, on
 
   const handleConfirm = () => {
     console.log('Confirming address:', address, 'Coordinates:', coordinates)
-    onAddressConfirm(address)
+    onAddressConfirm(address, coordinates.lat, coordinates.lng)
   }
 
   return (
-    <Card className="w-full max-w-3xl mx-auto">
+    <Card className="w-full">
       <CardHeader className="space-y-1">
         <div className="flex items-center">
           <Button variant="ghost" onClick={onBack} className="mr-2">

@@ -5,23 +5,27 @@ import ProjectTypeSelector from './components/ProjectTypeSelector'
 import ProjectAddressForm from './components/ProjectAddressForm'
 import ProjectDetailsForm from './components/ProjectDetailsForm'
 import PinnedProjectType from './components/PinnedProjectType'
+import PinnedMap from './components/PinnedMap'
 import FormInstructions from './components/FormInstructions'
 
 export default function Home() {
   const [projectType, setProjectType] = React.useState<string | null>(null)
   const [address, setAddress] = React.useState<string | null>(null)
+  const [coordinates, setCoordinates] = React.useState<{ lat: number; lng: number } | null>(null)
 
   const handleSelectProjectType = (type: string) => {
     setProjectType(type)
   }
 
-  const handleAddressConfirm = (confirmedAddress: string) => {
+  const handleAddressConfirm = (confirmedAddress: string, lat: number, lng: number) => {
     setAddress(confirmedAddress)
+    setCoordinates({ lat, lng })
   }
 
   const handleBack = () => {
     if (address) {
       setAddress(null)
+      setCoordinates(null)
     } else if (projectType) {
       setProjectType(null)
     }
@@ -57,8 +61,11 @@ export default function Home() {
       </main>
       {projectType && (
         <aside className="lg:w-64 p-6 border-t lg:border-l lg:border-t-0">
-          <div className="lg:sticky lg:top-6">
+          <div className="lg:sticky lg:top-6 space-y-6">
             <PinnedProjectType projectType={projectType} currentStep={getCurrentStep()} />
+            {address && coordinates && (
+              <PinnedMap address={address} lat={coordinates.lat} lng={coordinates.lng} />
+            )}
           </div>
         </aside>
       )}
