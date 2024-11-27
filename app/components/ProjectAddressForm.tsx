@@ -46,17 +46,6 @@ const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, on
       <CardContent>
         <div className="space-y-6">
           <GoogleMapComponent onAddressSelect={handleAddressSelect} />
-          <div className="p-4 bg-muted rounded-lg">
-            <h4 className="font-semibold mb-2">Instructions:</h4>
-            <ol className="list-decimal list-inside space-y-1 text-sm">
-              <li>Enter the project address in the input field above.</li>
-              <li>Select an address from the autocomplete suggestions.</li>
-              <li>The map will update to show the selected location.</li>
-              <li>Verify that the pin on the map accurately represents your project location.</li>
-              <li>If the location is correct, click &quot;Confirm Location&quot; to proceed.</li>
-              <li>If you need to make changes, simply enter a new address and select from the suggestions.</li>
-            </ol>
-          </div>
           <div className="flex justify-between">
             <Button onClick={() => setIsAddressConfirmed(false)} variant="outline">
               Edit Address
