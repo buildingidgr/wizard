@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from 'lucide-react'
@@ -10,10 +9,10 @@ import GoogleMapComponent from './GoogleMapComponent'
 interface ProjectAddressFormProps {
   projectType: string;
   onBack: () => void;
+  onAddressConfirm: (address: string) => void;
 }
 
-const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, onBack }) => {
-  const router = useRouter()
+const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, onBack, onAddressConfirm }) => {
   const [address, setAddress] = React.useState('')
   const [coordinates, setCoordinates] = React.useState({ lat: 0, lng: 0 })
   const [isAddressConfirmed, setIsAddressConfirmed] = React.useState(false)
@@ -26,7 +25,7 @@ const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, on
 
   const handleConfirm = () => {
     console.log('Confirming address:', address, 'Coordinates:', coordinates)
-    router.push('/project-summary')
+    onAddressConfirm(address)
   }
 
   return (
