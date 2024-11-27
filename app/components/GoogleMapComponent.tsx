@@ -15,8 +15,10 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ onAddressSelect
   })
 
   const [center, setCenter] = React.useState({ lat: 0, lng: 0 })
+  const [zoom, setZoom] = React.useState(2) // Start with a zoomed-out view
   const [address, setAddress] = React.useState('')
   const autocompleteRef = React.useRef<google.maps.places.Autocomplete | null>(null)
+  const mapRef = React.useRef<google.maps.Map | null>(null)
 
   const mapContainerStyle = {
     width: '100%',
@@ -31,7 +33,17 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ onAddressSelect
       setCenter({ lat, lng })
       setAddress(place.formatted_address || '')
       onAddressSelect(place.formatted_address || '', lat, lng)
+
+      // Zoom in and center the map
+      setZoom(17) // Set a closer zoom level
+      if (mapRef.current) {
+        mapRef.current.panTo({ lat, lng })
+      }
     }
+  }
+
+  const onMapLoad = (map: google.maps.Map) => {
+    mapRef.current = map
   }
 
   React.useEffect(() => {
@@ -70,7 +82,8 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ onAddressSelect
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
           center={center}
-          zoom={15}
+          zoom={zoom}
+          onLoad={onMapLoad}
         >
           {center.lat !== 0 && center.lng !== 0 && <Marker position={center} />}
         </GoogleMap>
