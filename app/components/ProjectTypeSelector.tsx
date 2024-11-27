@@ -7,7 +7,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
 import { Home, Building2, Factory, Map, Pencil } from 'lucide-react'
 
-const ProjectTypeSelector = () => {
+interface ProjectTypeSelectorProps {
+  onSelectProjectType: (type: string) => void;
+}
+
+const ProjectTypeSelector: React.FC<ProjectTypeSelectorProps> = ({ onSelectProjectType }) => {
   const [selectedType, setSelectedType] = React.useState("")
 
   const projectTypes = [
@@ -42,6 +46,12 @@ const ProjectTypeSelector = () => {
       icon: Pencil
     }
   ]
+
+  const handleContinue = () => {
+    if (selectedType) {
+      onSelectProjectType(selectedType);
+    }
+  }
 
   return (
     <Card className="w-full max-w-3xl mx-auto">
@@ -86,7 +96,7 @@ const ProjectTypeSelector = () => {
           ))}
         </RadioGroup>
         <div className="flex justify-end">
-          <Button disabled={!selectedType} className="w-32">
+          <Button onClick={handleContinue} disabled={!selectedType} className="w-32">
             Continue
           </Button>
         </div>
