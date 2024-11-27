@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { ProjectTypeSelection } from "@/app/steps/project-type-selection"
 import { ProjectLocationSize } from "@/app/steps/project-location-size"
 import { ProjectGoalsRequirements } from "@/app/steps/project-goals-requirements"
@@ -12,18 +12,6 @@ import { AdditionalDetails } from "@/app/steps/additional-details"
 import { ReviewSubmit } from "@/app/steps/review-submit"
 import { ContactDetails } from "@/app/steps/contact-details"
 import { TopBar } from "@/app/components/top-bar"
-
-const steps = [
-  "Project Type",
-  "Location & Size",
-  "Goals & Requirements",
-  "Budget & Timeline",
-  "Additional Details",
-  "Contact Details",
-  "Review & Submit"
-]
-
-const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL || 'https://webhook-service-production-dfad.up.railway.app/'
 
 interface ProjectData {
   projectType?: string;
@@ -41,29 +29,41 @@ interface ProjectData {
   phone?: string;
 }
 
-export function ProjectCreationFlow() {
-  const [currentStep, setCurrentStep] = useState(0)
+const steps: string[] = [
+  "Project Type",
+  "Location & Size",
+  "Goals & Requirements",
+  "Budget & Timeline",
+  "Additional Details",
+  "Contact Details",
+  "Review & Submit"
+]
+
+const WEBHOOK_URL: string = process.env.NEXT_PUBLIC_WEBHOOK_URL || 'https://webhook-service-production-dfad.up.railway.app/'
+
+export function ProjectCreationFlow(): JSX.Element {
+  const [currentStep, setCurrentStep] = useState<number>(0)
   const [projectData, setProjectData] = useState<ProjectData>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const router = useRouter()
 
-  const updateProjectData = (newData: Partial<ProjectData>) => {
+  const updateProjectData = (newData: Partial<ProjectData>): void => {
     setProjectData((prevData) => ({ ...prevData, ...newData }))
   }
 
-  const handleNext = () => {
+  const handleNext = (): void => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
     }
   }
 
-  const handlePrevious = () => {
+  const handlePrevious = (): void => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1)
     }
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (): Promise<void> => {
     setIsSubmitting(true)
     const projectId = `PROJ-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
     
@@ -84,7 +84,7 @@ export function ProjectCreationFlow() {
       goals: projectData.goals,
       requirements: projectData.requirements,
       budget: {
-        amount: parseFloat(projectData.budget || '0'),
+        amount: parseFloat(projectData.budget || '0') || null,
         currency: "USD"
       },
       timeline: {
@@ -127,7 +127,7 @@ export function ProjectCreationFlow() {
     }
   }
 
-  const renderStep = () => {
+  const renderStep = (): JSX.Element | null => {
     switch (currentStep) {
       case 0:
         return <ProjectTypeSelection updateProjectData={updateProjectData} />
@@ -160,9 +160,6 @@ export function ProjectCreationFlow() {
       </div>
       <div className="w-full max-w-5xl mx-auto px-4 py-6">
         <Card className="border-none shadow-none bg-card">
-          <CardHeader>
-            <CardTitle>Create New Project</CardTitle>
-          </CardHeader>
           <CardContent className="space-y-8">
             <div className="space-y-6">
               <div className="flex justify-center">
