@@ -1,79 +1,82 @@
 "use client"
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AddressAutocomplete } from '@/components/address-autocomplete'
+import { Textarea } from "@/components/ui/textarea"
+import { AddressAutocomplete } from './address-autocomplete'
 
-export default function ProjectCreationFlow() {
-  const router = useRouter()
-  const [step, setStep] = useState(1)
-  const [projectData, setProjectData] = useState({
+// Define the shape of our project data
+interface ProjectData {
+  projectName: string;
+  projectType: string;
+  description: string;
+  budget: string;
+  timeline: string;
+  location: string;
+  size: string;
+  additionalDetails: string;
+}
+
+export function ProjectCreationFlow() {
+  const [step, setStep] = useState(1);
+  const [projectData, setProjectData] = useState<ProjectData>({
     projectName: '',
     projectType: '',
     description: '',
-    location: '',
-    size: '',
     budget: '',
     timeline: '',
-    additionalDetails: ''
-  })
+    location: '',
+    size: '',
+    additionalDetails: '',
+  });
 
-  const updateProjectData = (field: string, value: string) => {
+  const updateProjectData = (field: keyof ProjectData, value: string) => {
     setProjectData(prevData => ({
       ...prevData,
       [field]: value
-    }))
-  }
+    }));
+  };
 
   const handleNext = () => {
-    if (step < 4) {
-      setStep(step + 1)
-    } else {
-      handleSubmit()
-    }
-  }
+    setStep(prevStep => prevStep + 1);
+  };
 
   const handleBack = () => {
-    if (step > 1) {
-      setStep(step - 1)
-    }
-  }
+    setStep(prevStep => prevStep - 1);
+  };
 
-  const handleSubmit = async () => {
-    // Here you would typically send the project data to your backend
-    console.log('Submitting project:', projectData)
-    
-    // For now, we'll just log the data and redirect to the projects page
-    router.push('/projects')
-  }
+  const handleSubmit = () => {
+    console.log('Project Data:', projectData);
+    // Here you would typically send the data to your backend
+  };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Create New Project</h1>
-      
-      {step === 1 && (
-        <div>
-          <h2 className="text-xl font-semibold mb-2">Project Basics</h2>
+    <Card className="w-[550px]">
+      <CardHeader>
+        <CardTitle>Create a New Project</CardTitle>
+        <CardDescription>Step {step} of 4</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {step === 1 && (
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="projectName">Project Name</Label>
+            <div className="space-y-2">
+              <Label htmlFor="project-name">Project Name</Label>
               <Input
-                id="projectName"
+                id="project-name"
+                placeholder="Enter project name"
                 value={projectData.projectName}
                 onChange={(e) => updateProjectData('projectName', e.target.value)}
-                placeholder="Enter project name"
               />
             </div>
-            <div>
-              <Label htmlFor="projectType">Project Type</Label>
+            <div className="space-y-2">
+              <Label htmlFor="project-type">Project Type</Label>
               <Select onValueChange={(value) => updateProjectData('projectType', value)}>
-                <SelectTrigger>
+                <SelectTrigger id="project-type">
                   <SelectValue placeholder="Select project type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -84,130 +87,85 @@ export default function ProjectCreationFlow() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="description">Project Description</Label>
               <Textarea
                 id="description"
+                placeholder="Describe your project"
                 value={projectData.description}
                 onChange={(e) => updateProjectData('description', e.target.value)}
-                placeholder="Describe your project"
               />
             </div>
           </div>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div>
-          <h2 className="text-xl font-semibold mb-2">Location & Size</h2>
+        )}
+        {step === 2 && (
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="location">Project Location</Label>
+            <div className="space-y-2">
+              <Label htmlFor="budget">Budget</Label>
+              <Input
+                id="budget"
+                placeholder="Enter project budget"
+                value={projectData.budget}
+                onChange={(e) => updateProjectData('budget', e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="timeline">Timeline</Label>
+              <Input
+                id="timeline"
+                placeholder="Enter project timeline"
+                value={projectData.timeline}
+                onChange={(e) => updateProjectData('timeline', e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+        {step === 3 && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="location">Location</Label>
               <AddressAutocomplete
                 onAddressSelect={(address) => updateProjectData('location', address)}
               />
             </div>
-            <div>
-              <Label htmlFor="size">Project Size (sq ft)</Label>
+            <div className="space-y-2">
+              <Label htmlFor="size">Project Size</Label>
               <Input
                 id="size"
-                type="number"
+                placeholder="Enter project size"
                 value={projectData.size}
                 onChange={(e) => updateProjectData('size', e.target.value)}
-                placeholder="Enter project size"
               />
             </div>
           </div>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div>
-          <h2 className="text-xl font-semibold mb-2">Budget & Timeline</h2>
+        )}
+        {step === 4 && (
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="budget">Estimated Budget ($)</Label>
-              <Input
-                id="budget"
-                type="number"
-                value={projectData.budget}
-                onChange={(e) => updateProjectData('budget', e.target.value)}
-                placeholder="Enter estimated budget"
-              />
-            </div>
-            <div>
-              <Label htmlFor="timeline">Project Timeline</Label>
-              <Select onValueChange={(value) => updateProjectData('timeline', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select project timeline" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0-3 months">0-3 months</SelectItem>
-                  <SelectItem value="3-6 months">3-6 months</SelectItem>
-                  <SelectItem value="6-12 months">6-12 months</SelectItem>
-                  <SelectItem value="1-2 years">1-2 years</SelectItem>
-                  <SelectItem value="2+ years">2+ years</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {step === 4 && (
-        <div>
-          <h2 className="text-xl font-semibold mb-2">Review & Submit</h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold">Project Name:</h3>
-              <p>{projectData.projectName}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Project Type:</h3>
-              <p>{projectData.projectType}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Description:</h3>
-              <p>{projectData.description}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Location:</h3>
-              <p>{projectData.location}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Size:</h3>
-              <p>{projectData.size} sq ft</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Budget:</h3>
-              <p>${projectData.budget}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Timeline:</h3>
-              <p>{projectData.timeline}</p>
-            </div>
-            <div>
-              <Label htmlFor="additionalDetails">Additional Details</Label>
+            <div className="space-y-2">
+              <Label htmlFor="additional-details">Additional Details</Label>
               <Textarea
-                id="additionalDetails"
+                id="additional-details"
+                placeholder="Any additional information"
                 value={projectData.additionalDetails}
                 onChange={(e) => updateProjectData('additionalDetails', e.target.value)}
-                placeholder="Any additional information about your project"
               />
             </div>
           </div>
-        </div>
-      )}
-
-      <div className="mt-6 flex justify-between">
-        {step > 1 && (
-          <Button onClick={handleBack}>Back</Button>
         )}
-        <Button onClick={handleNext}>
-          {step < 4 ? 'Next' : 'Submit Project'}
-        </Button>
-      </div>
-    </div>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        {step > 1 && (
+          <Button variant="outline" onClick={handleBack}>
+            Back
+          </Button>
+        )}
+        {step < 4 ? (
+          <Button onClick={handleNext}>Next</Button>
+        ) : (
+          <Button onClick={handleSubmit}>Submit</Button>
+        )}
+      </CardFooter>
+    </Card>
   )
 }
 
