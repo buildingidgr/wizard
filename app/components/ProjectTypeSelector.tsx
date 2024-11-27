@@ -1,11 +1,11 @@
 'use client'
 
 import React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Button } from "@/components/ui/button"
-import { Home, Building2, Factory, Road } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
+import { Label } from "../../components/ui/label"
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group"
+import { Button } from "../../components/ui/button"
+import { Home, Building2, Factory, Map } from 'lucide-react'
 
 const ProjectTypeSelector = () => {
   const [selectedType, setSelectedType] = React.useState("")
@@ -33,7 +33,7 @@ const ProjectTypeSelector = () => {
       id: "infrastructure",
       label: "Infrastructure",
       description: "Roads, bridges, utilities, or public facilities",
-      icon: <Road className="w-6 h-6" />
+      icon: <Map className="w-6 h-6" />
     }
   ]
 
