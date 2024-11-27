@@ -45,34 +45,50 @@ const ProjectTypeSelector = () => {
 
   return (
     <Card className="w-full max-w-3xl mx-auto">
-      <CardHeader>
-        <CardTitle>New Civil Engineering Project</CardTitle>
-        <CardDescription>Start by selecting the type of project you'd like to submit</CardDescription>
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl">New Civil Engineering Project</CardTitle>
+        <CardDescription>
+          Start by selecting the type of project you'd like to submit
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <RadioGroup value={selectedType} onValueChange={setSelectedType} className="grid gap-4">
+      <CardContent className="grid gap-6">
+        <RadioGroup
+          value={selectedType}
+          onValueChange={setSelectedType}
+          className="grid gap-4"
+        >
           {projectTypes.map((type) => (
-            <div key={type.id}>
-              <RadioGroupItem value={type.id} id={type.id} className="peer sr-only" />
+            <div key={type.id} className="relative">
+              <RadioGroupItem
+                value={type.id}
+                id={type.id}
+                className="peer sr-only"
+              />
               <Label
                 htmlFor={type.id}
-                className="flex items-center justify-between rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                className="flex items-start space-x-4 rounded-lg border p-4 hover:bg-accent peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
               >
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    {React.createElement(type.icon, { className: "h-6 w-6" })}
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-base font-medium leading-none">{type.label}</p>
-                    <p className="text-sm text-muted-foreground">{type.description}</p>
-                  </div>
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border bg-primary/5 text-primary">
+                  {React.createElement(type.icon, {
+                    className: "h-6 w-6",
+                  })}
+                </div>
+                <div className="space-y-1">
+                  <p className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {type.label}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {type.description}
+                  </p>
                 </div>
               </Label>
             </div>
           ))}
         </RadioGroup>
-        <div className="flex justify-end mt-6">
-          <Button disabled={!selectedType}>Continue</Button>
+        <div className="flex justify-end">
+          <Button disabled={!selectedType} className="w-32">
+            Continue
+          </Button>
         </div>
       </CardContent>
     </Card>
