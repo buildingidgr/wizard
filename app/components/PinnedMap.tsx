@@ -33,7 +33,9 @@ const PinnedMap: React.FC<PinnedMapProps> = ({ address, lat, lng }) => {
             zoom={15}
             options={{
               disableDefaultUI: true,
-              zoomControl: true,
+              zoomControl: false,
+              scrollwheel: false,
+              draggable: false,
             }}
           >
             <Marker position={center} />

@@ -34,8 +34,14 @@ const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({ projectType, ad
     router.push('/project-summary')
   }
 
+  const handleNumberInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    const numericValue = value.replace(/[^0-9]/g, '')
+    setDetails(prev => ({ ...prev, [name]: numericValue }))
+  }
+
   return (
-    <Card className="w-full max-w-3xl mx-auto">
+    <Card className="w-full">
       <CardHeader className="space-y-1">
         <div className="flex items-center">
           <Button variant="ghost" onClick={onBack} className="mr-2">
@@ -44,7 +50,7 @@ const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({ projectType, ad
           <div>
             <CardTitle className="text-2xl">Project Details</CardTitle>
             <CardDescription>
-              Provide information about your project at {address}
+              Provide information about your {projectType} project at {address}
             </CardDescription>
           </div>
         </div>
@@ -73,22 +79,30 @@ const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({ projectType, ad
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="budget">Budget</Label>
+              <Label htmlFor="budget">Budget (in $)</Label>
               <Input
                 id="budget"
+                name="budget"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="Estimated budget"
                 value={details.budget}
-                onChange={(e) => setDetails({ ...details, budget: e.target.value })}
+                onChange={handleNumberInput}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="timeline">Timeline</Label>
+              <Label htmlFor="timeline">Timeline (in days)</Label>
               <Input
                 id="timeline"
+                name="timeline"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="Expected timeline"
                 value={details.timeline}
-                onChange={(e) => setDetails({ ...details, timeline: e.target.value })}
+                onChange={handleNumberInput}
                 required
               />
             </div>
