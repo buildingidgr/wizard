@@ -11,7 +11,7 @@ import 'react-phone-number-input/style.css'
 
 interface ContactDetailsFormProps {
   onBack: () => void;
-  onSubmit: (details: { fullName: string; email: string; phone: string }) => void;
+  onSubmit: (details: { fullName: string; email: string; phone: string }, initialRequestTime: number) => void;
 }
 
 const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({ onBack, onSubmit }) => {
@@ -41,7 +41,8 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({ onBack, onSubmi
       })
 
       if (response.ok) {
-        onSubmit(contactDetails)
+        const initialRequestTime = Date.now()
+        onSubmit(contactDetails, initialRequestTime)
       } else {
         const data = await response.json()
         setError(data.error || 'Failed to send verification code. Please try again.')
