@@ -4,7 +4,7 @@ import { Home, Building2, Factory, Map, Pencil } from 'lucide-react'
 
 interface PinnedProjectTypeProps {
   projectType: string;
-  currentStep: 'type' | 'address' | 'details' | 'contact' | 'complete';
+  currentStep: 'type' | 'address' | 'details' | 'contact' | 'verify' | 'complete';
 }
 
 const projectTypeIcons = {
@@ -40,11 +40,12 @@ const PinnedProjectType: React.FC<PinnedProjectTypeProps> = ({ projectType, curr
         <div className="space-y-1">
           <div className="text-xs text-muted-foreground">Progress</div>
           <div className="flex space-x-1">
-            <div className={`h-1 w-1/5 rounded-full ${currentStep === 'type' ? 'bg-primary' : 'bg-primary/30'}`} />
-            <div className={`h-1 w-1/5 rounded-full ${currentStep === 'address' ? 'bg-primary' : 'bg-primary/30'}`} />
-            <div className={`h-1 w-1/5 rounded-full ${currentStep === 'details' ? 'bg-primary' : 'bg-primary/30'}`} />
-            <div className={`h-1 w-1/5 rounded-full ${currentStep === 'contact' ? 'bg-primary' : 'bg-primary/30'}`} />
-            <div className={`h-1 w-1/5 rounded-full ${currentStep === 'complete' ? 'bg-primary' : 'bg-primary/30'}`} />
+            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'type' ? 'bg-primary' : 'bg-primary/30'}`} />
+            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'address' ? 'bg-primary' : 'bg-primary/30'}`} />
+            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'details' ? 'bg-primary' : 'bg-primary/30'}`} />
+            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'contact' ? 'bg-primary' : 'bg-primary/30'}`} />
+            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'verify' ? 'bg-primary' : 'bg-primary/30'}`} />
+            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'complete' ? 'bg-primary' : 'bg-primary/30'}`} />
           </div>
         </div>
       </CardContent>
