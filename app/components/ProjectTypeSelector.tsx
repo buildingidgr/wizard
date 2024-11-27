@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../..
 import { Label } from "../../components/ui/label"
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group"
 import { Button } from "../../components/ui/button"
-import { Home, Building2, Factory, Map } from 'lucide-react'
+import { Home, Building2, Factory, Map, Pencil } from 'lucide-react'
 
 const ProjectTypeSelector = () => {
   const [selectedType, setSelectedType] = React.useState("")
@@ -34,6 +34,12 @@ const ProjectTypeSelector = () => {
       label: "Infrastructure",
       description: "Roads, bridges, utilities, or public facilities",
       icon: <Map className="w-6 h-6" />
+    },
+    {
+      id: "design-planning",
+      label: "Design/Planning",
+      description: "Architectural designs, urban planning, or project blueprints",
+      icon: <Pencil className="w-6 h-6" />
     }
   ]
 
