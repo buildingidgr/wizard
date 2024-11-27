@@ -47,7 +47,7 @@ export function ProjectCreationFlow(): JSX.Element {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const router = useRouter()
 
-  const updateProjectData = (newData: Partial<ProjectData>) => {
+  const updateProjectData = (newData: Partial<ProjectData>): void => {
     setProjectData((prevData) => ({ ...prevData, ...newData }))
   }
 
