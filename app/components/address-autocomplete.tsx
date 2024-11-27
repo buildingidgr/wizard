@@ -27,21 +27,19 @@ export function AddressAutocomplete({ onAddressSelect }: AddressAutocompleteProp
     if (inputRef.current) {
       autoCompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, options)
 
-      const listener = autoCompleteRef.current.addListener("place_changed", () => {
-        if (autoCompleteRef.current) {
-          const place = autoCompleteRef.current.getPlace()
+      if (autoCompleteRef.current) {
+        const listener = autoCompleteRef.current.addListener("place_changed", () => {
+          const place = autoCompleteRef.current?.getPlace()
           if (place && place.formatted_address) {
             onAddressSelect(place.formatted_address)
           }
-        }
-      })
+        })
 
-      return () => {
-        if (listener) {
-          window.google.maps.event.removeListener(listener)
-        }
-        if (autoCompleteRef.current) {
-          window.google.maps.event.clearInstanceListeners(autoCompleteRef.current)
+        return () => {
+          if (autoCompleteRef.current) {
+            google.maps.event.removeListener(listener)
+            google.maps.event.clearInstanceListeners(autoCompleteRef.current)
+          }
         }
       }
     }
