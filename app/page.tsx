@@ -12,6 +12,7 @@ import PinnedProjectType from './components/PinnedProjectType'
 import PinnedMap from './components/PinnedMap'
 import PinnedProjectDetails from './components/PinnedProjectDetails'
 import FormInstructions from './components/FormInstructions'
+import ProgressBar from './components/ProgressBar'
 
 export default function Home() {
   const [step, setStep] = useState<'intro' | 'type' | 'address' | 'details' | 'contact' | 'verify' | 'complete'>('intro')
@@ -131,6 +132,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      {step !== 'intro' && <ProgressBar currentStep={step} />}
       <div className="flex flex-col lg:flex-row flex-grow">
         <main className="flex-grow p-6">
           <div className="max-w-2xl mx-auto">
@@ -141,7 +143,7 @@ export default function Home() {
         {step !== 'intro' && projectType && (
           <aside className="lg:w-96 p-6 border-t lg:border-l lg:border-t-0">
             <div className="lg:sticky lg:top-6 space-y-6">
-              <PinnedProjectType projectType={projectType} currentStep={step} />
+              <PinnedProjectType projectType={projectType} />
               {address && coordinates && (
                 <PinnedMap address={address} lat={coordinates.lat} lng={coordinates.lng} />
               )}

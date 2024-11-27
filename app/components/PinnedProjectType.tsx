@@ -4,7 +4,6 @@ import { Home, Building2, Factory, Map, Pencil } from 'lucide-react'
 
 interface PinnedProjectTypeProps {
   projectType: string;
-  currentStep: 'type' | 'address' | 'details' | 'contact' | 'verify' | 'complete';
 }
 
 const projectTypeIcons = {
@@ -23,7 +22,7 @@ const projectTypeLabels = {
   "design-planning": "Design/Planning",
 }
 
-const PinnedProjectType: React.FC<PinnedProjectTypeProps> = ({ projectType, currentStep }) => {
+const PinnedProjectType: React.FC<PinnedProjectTypeProps> = ({ projectType }) => {
   const Icon = projectTypeIcons[projectType as keyof typeof projectTypeIcons] || Home
   const label = projectTypeLabels[projectType as keyof typeof projectTypeLabels] || "Unknown"
 
@@ -33,20 +32,9 @@ const PinnedProjectType: React.FC<PinnedProjectTypeProps> = ({ projectType, curr
         <CardTitle className="text-sm font-medium">Selected Project Type</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center space-x-2 mb-4">
+        <div className="flex items-center space-x-2">
           <Icon className="h-5 w-5 text-primary" />
           <span className="text-sm font-semibold">{label}</span>
-        </div>
-        <div className="space-y-1">
-          <div className="text-xs text-muted-foreground">Progress</div>
-          <div className="flex space-x-1">
-            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'type' ? 'bg-primary' : 'bg-primary/30'}`} />
-            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'address' ? 'bg-primary' : 'bg-primary/30'}`} />
-            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'details' ? 'bg-primary' : 'bg-primary/30'}`} />
-            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'contact' ? 'bg-primary' : 'bg-primary/30'}`} />
-            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'verify' ? 'bg-primary' : 'bg-primary/30'}`} />
-            <div className={`h-1 w-1/6 rounded-full ${currentStep === 'complete' ? 'bg-primary' : 'bg-primary/30'}`} />
-          </div>
         </div>
       </CardContent>
     </Card>
