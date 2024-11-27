@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -13,10 +12,10 @@ interface ProjectDetailsFormProps {
   projectType: string;
   address: string;
   onBack: () => void;
+  onSubmit: (details: any) => void;
 }
 
-const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({ projectType, address, onBack }) => {
-  const router = useRouter()
+const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({ projectType, address, onBack, onSubmit }) => {
   const [details, setDetails] = React.useState({
     goals: '',
     requirements: '',
@@ -29,9 +28,7 @@ const ProjectDetailsForm: React.FC<ProjectDetailsFormProps> = ({ projectType, ad
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log('Submitting project details:', details)
-    // Here you would typically send this data to your backend
-    // For now, we'll just log it and pretend to navigate to a confirmation page
-    router.push('/project-summary')
+    onSubmit(details)
   }
 
   const handleNumberInput = (e: React.ChangeEvent<HTMLInputElement>) => {

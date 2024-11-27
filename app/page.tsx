@@ -4,14 +4,17 @@ import React from 'react'
 import ProjectTypeSelector from './components/ProjectTypeSelector'
 import ProjectAddressForm from './components/ProjectAddressForm'
 import ProjectDetailsForm from './components/ProjectDetailsForm'
+import ContactDetailsForm from './components/ContactDetailsForm'
 import PinnedProjectType from './components/PinnedProjectType'
 import PinnedMap from './components/PinnedMap'
+import PinnedProjectDetails from './components/PinnedProjectDetails'
 import FormInstructions from './components/FormInstructions'
 
 export default function Home() {
   const [projectType, setProjectType] = React.useState<string | null>(null)
   const [address, setAddress] = React.useState<string | null>(null)
   const [coordinates, setCoordinates] = React.useState<{ lat: number; lng: number } | null>(null)
+  const [projectDetails, setProjectDetails] = React.useState<any>(null)
 
   const handleSelectProjectType = (type: string) => {
     setProjectType(type)
@@ -22,8 +25,14 @@ export default function Home() {
     setCoordinates({ lat, lng })
   }
 
+  const handleProjectDetailsSubmit = (details: any) => {
+    setProjectDetails(details)
+  }
+
   const handleBack = () => {
-    if (address) {
+    if (projectDetails) {
+      setProjectDetails(null)
+    } else if (address) {
       setAddress(null)
       setCoordinates(null)
     } else if (projectType) {
@@ -34,7 +43,8 @@ export default function Home() {
   const getCurrentStep = () => {
     if (!projectType) return 'type'
     if (!address) return 'address'
-    return 'details'
+    if (!projectDetails) return 'details'
+    return 'contact'
   }
 
   return (
@@ -42,11 +52,14 @@ export default function Home() {
       <main className="flex-grow p-6">
         <div className="max-w-3xl mx-auto">
           <FormInstructions step={getCurrentStep()} />
-          {address && projectType ? (
+          {projectDetails ? (
+            <ContactDetailsForm onBack={handleBack} />
+          ) : address && projectType ? (
             <ProjectDetailsForm 
               projectType={projectType} 
               address={address} 
-              onBack={handleBack} 
+              onBack={handleBack}
+              onSubmit={handleProjectDetailsSubmit}
             />
           ) : projectType ? (
             <ProjectAddressForm 
@@ -65,6 +78,9 @@ export default function Home() {
             <PinnedProjectType projectType={projectType} currentStep={getCurrentStep()} />
             {address && coordinates && (
               <PinnedMap address={address} lat={coordinates.lat} lng={coordinates.lng} />
+            )}
+            {projectDetails && (
+              <PinnedProjectDetails details={projectDetails} />
             )}
           </div>
         </aside>

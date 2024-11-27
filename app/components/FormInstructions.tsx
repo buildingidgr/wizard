@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface FormInstructionsProps {
-  step: 'type' | 'address' | 'details';
+  step: 'type' | 'address' | 'details' | 'contact';
 }
 
 const FormInstructions: React.FC<FormInstructionsProps> = ({ step }) => {
@@ -10,6 +10,7 @@ const FormInstructions: React.FC<FormInstructionsProps> = ({ step }) => {
     type: "Select the type of civil engineering project you're submitting. This helps us understand the nature of your project.",
     address: "Enter the project location. Use the map to pinpoint the exact address where the project will take place.",
     details: "Provide detailed information about your project, including goals, requirements, budget, and timeline.",
+    contact: "Please provide your contact information so we can get in touch with you about your project.",
   }
 
   return (
