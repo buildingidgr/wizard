@@ -1,6 +1,6 @@
 # MechHub
 
-MechHub is a multi-step wizard for creating civil engineering projects.
+MechHub is a multi-step wizard for creating civil engineering projects. Its the best
 
 ## Deployment on Railway
 
