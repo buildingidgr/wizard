@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Home, Building2, Factory, Map, Pencil } from 'lucide-react'
+import { Home, Building2, Factory, Map, Pencil, Construction } from 'lucide-react'
 
 interface PinnedProjectTypeProps {
   projectType: string;
@@ -12,6 +12,7 @@ const projectTypeIcons = {
   industrial: Factory,
   infrastructure: Map,
   "design-planning": Pencil,
+  "small-scale": Construction,
 }
 
 const projectTypeLabels = {
@@ -20,11 +21,12 @@ const projectTypeLabels = {
   industrial: "Industrial",
   infrastructure: "Infrastructure",
   "design-planning": "Design/Planning",
+  "small-scale": "Small-Scale Construction Projects",
 }
 
 const PinnedProjectType: React.FC<PinnedProjectTypeProps> = ({ projectType }) => {
   const Icon = projectTypeIcons[projectType as keyof typeof projectTypeIcons] || Home
-  const label = projectTypeLabels[projectType as keyof typeof projectTypeLabels] || "Unknown"
+  const label = projectTypeLabels[projectType as keyof typeof projectTypeLabels] || "Not selected"
 
   return (
     <Card className="w-full">

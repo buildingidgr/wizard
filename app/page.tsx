@@ -140,10 +140,10 @@ export default function Home() {
             {renderStep()}
           </div>
         </main>
-        {step !== 'intro' && projectType && (
+        {(step !== 'intro' || step === 'type') && (
           <aside className="lg:w-96 p-6 border-t lg:border-l lg:border-t-0">
             <div className="lg:sticky lg:top-6 space-y-6">
-              <PinnedProjectType projectType={projectType} />
+              <PinnedProjectType projectType={projectType || 'Not selected'} />
               {address && coordinates && (
                 <PinnedMap address={address} lat={coordinates.lat} lng={coordinates.lng} />
               )}

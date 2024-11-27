@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
-import { Home, Building2, Factory, Map, Pencil } from 'lucide-react'
+import { Home, Building2, Factory, Map, Pencil, Construction } from 'lucide-react'
 
 interface ProjectTypeSelectorProps {
   onSelectProjectType: (type: string) => void;
@@ -44,6 +44,12 @@ const ProjectTypeSelector: React.FC<ProjectTypeSelectorProps> = ({ onSelectProje
       label: "Design/Planning",
       description: "Architectural designs, urban planning, or project blueprints",
       icon: Pencil
+    },
+    {
+      id: "small-scale",
+      label: "Small-Scale Construction Projects",
+      description: "Minor renovations, additions, or small structures",
+      icon: Construction
     }
   ]
 
@@ -56,9 +62,9 @@ const ProjectTypeSelector: React.FC<ProjectTypeSelectorProps> = ({ onSelectProje
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl">New Civil Engineering Project</CardTitle>
+        <CardTitle className="text-2xl">Select your project type</CardTitle>
         <CardDescription>
-          Start by selecting the type of project you'd like to submit
+          Choose the category that best describes your civil engineering project
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
