@@ -13,17 +13,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
   }
 
+  console.log('Initializing Twilio client with:', { accountSid, authToken: '******', verifyServiceSid })
+
   const client = twilio(accountSid, authToken)
 
   try {
+    console.log('Attempting to send verification to:', phoneNumber)
     const verification = await client.verify.v2
       .services(verifyServiceSid)
       .verifications.create({ to: phoneNumber, channel: 'sms' })
 
+    console.log('Verification sent successfully:', verification.status)
     return NextResponse.json({ success: true, status: verification.status })
   } catch (error) {
     console.error('Error sending verification:', error)
-    return NextResponse.json({ error: 'Failed to send verification code' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to send verification code', details: error.message }, { status: 500 })
   }
 }
 
