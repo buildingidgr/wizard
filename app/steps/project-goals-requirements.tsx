@@ -1,40 +1,55 @@
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import Image from "next/image"
+"use client"
 
-export function ProjectGoalsRequirements({ updateProjectData }) {
+import { useState } from "react"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+
+interface ProjectGoalsRequirementsProps {
+  updateProjectData: (data: { goals?: string; requirements?: string }) => void
+}
+
+export function ProjectGoalsRequirements({ updateProjectData }: ProjectGoalsRequirementsProps) {
+  const [goals, setGoals] = useState("")
+  const [requirements, setRequirements] = useState("")
+
+  const handleGoalsChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setGoals(event.target.value)
+    updateProjectData({ goals: event.target.value })
+  }
+
+  const handleRequirementsChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setRequirements(event.target.value)
+    updateProjectData({ requirements: event.target.value })
+  }
+
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold mb-4">Project Goals and Requirements</h2>
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1 space-y-4">
-          <div>
-            <Label htmlFor="goals">What are your main goals for this project?</Label>
-            <Textarea
-              id="goals"
-              placeholder="e.g., Create a family home, Expand office space, Improve road safety"
-              onChange={(e) => updateProjectData({ goals: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="requirements">Specific Requirements or Features</Label>
-            <Textarea
-              id="requirements"
-              placeholder="e.g., 3 bedrooms and 2 bathrooms, LEED certification, Wheelchair accessibility"
-              onChange={(e) => updateProjectData({ requirements: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="constraints">Any Known Constraints or Challenges?</Label>
-            <Textarea
-              id="constraints"
-              placeholder="e.g., Limited space, Environmental concerns, Zoning restrictions"
-              onChange={(e) => updateProjectData({ constraints: e.target.value })}
-            />
-          </div>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold">Project Goals & Requirements</h2>
+        <p className="text-muted-foreground">Define what you want to achieve and any specific requirements</p>
+      </div>
+
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="goals">Project Goals</Label>
+          <Textarea
+            id="goals"
+            placeholder="What are the main objectives of your project?"
+            value={goals}
+            onChange={handleGoalsChange}
+            rows={4}
+          />
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <Image src="/placeholder.svg?height=300&width=300" alt="Project Goals Illustration" width={300} height={300} className="rounded-lg" />
+
+        <div className="space-y-2">
+          <Label htmlFor="requirements">Specific Requirements</Label>
+          <Textarea
+            id="requirements"
+            placeholder="List any specific requirements, regulations, or constraints"
+            value={requirements}
+            onChange={handleRequirementsChange}
+            rows={4}
+          />
         </div>
       </div>
     </div>
