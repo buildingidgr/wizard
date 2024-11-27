@@ -31,9 +31,7 @@ const ProjectAddressForm: React.FC<ProjectAddressFormProps> = ({ projectType, on
   }
 
   const handleConfirm = () => {
-    // Here you would typically send this data to your backend or state management
     console.log('Confirming address:', address)
-    // For now, we'll just log it and pretend to navigate to a next step
     router.push('/project-summary')
   }
 
