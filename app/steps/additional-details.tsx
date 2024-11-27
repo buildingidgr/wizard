@@ -1,32 +1,55 @@
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import Image from "next/image"
+"use client"
 
-export function AdditionalDetails({ updateProjectData }) {
+import { useState } from "react"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+
+interface AdditionalDetailsProps {
+  updateProjectData: (data: { additionalDetails?: string; concerns?: string }) => void
+}
+
+export function AdditionalDetails({ updateProjectData }: AdditionalDetailsProps) {
+  const [additionalDetails, setAdditionalDetails] = useState("")
+  const [concerns, setConcerns] = useState("")
+
+  const handleDetailsChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setAdditionalDetails(event.target.value)
+    updateProjectData({ additionalDetails: event.target.value })
+  }
+
+  const handleConcernsChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setConcerns(event.target.value)
+    updateProjectData({ concerns: event.target.value })
+  }
+
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold mb-4">Additional Details and Concerns</h2>
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1 space-y-4">
-          <div>
-            <Label htmlFor="additionalInfo">Any Additional Information or Specific Requests?</Label>
-            <Textarea
-              id="additionalInfo"
-              placeholder="Please provide any other details that might be relevant to your project"
-              onChange={(e) => updateProjectData({ additionalInfo: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="concerns">Do you have any specific concerns or questions for the engineers?</Label>
-            <Textarea
-              id="concerns"
-              placeholder="List any concerns or questions you have about the project"
-              onChange={(e) => updateProjectData({ concerns: e.target.value })}
-            />
-          </div>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold">Additional Details</h2>
+        <p className="text-muted-foreground">Share any other relevant information about your project</p>
+      </div>
+
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="details">Additional Details</Label>
+          <Textarea
+            id="details"
+            placeholder="Any other important information about your project"
+            value={additionalDetails}
+            onChange={handleDetailsChange}
+            rows={4}
+          />
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <Image src="/placeholder.svg?height=300&width=300" alt="Additional Details Illustration" width={300} height={300} className="rounded-lg" />
+
+        <div className="space-y-2">
+          <Label htmlFor="concerns">Special Concerns</Label>
+          <Textarea
+            id="concerns"
+            placeholder="Any specific concerns or challenges that need to be addressed"
+            value={concerns}
+            onChange={handleConcernsChange}
+            rows={4}
+          />
         </div>
       </div>
     </div>
