@@ -27,7 +27,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, status: verification.status })
   } catch (error) {
     console.error('Error sending verification:', error)
-    return NextResponse.json({ error: 'Failed to send verification code', details: error.message }, { status: 500 })
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    return NextResponse.json({ error: 'Failed to send verification code', details: errorMessage }, { status: 500 })
   }
 }
 
