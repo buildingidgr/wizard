@@ -15,13 +15,13 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ address }) => {
 
   const mapContainerStyle = {
     width: '100%',
-    height: '400px'
+    height: '100%'
   }
 
   const [center, setCenter] = React.useState({ lat: 0, lng: 0 })
 
   React.useEffect(() => {
-    if (isLoaded && !loadError) {
+    if (isLoaded && !loadError && address) {
       const geocoder = new window.google.maps.Geocoder()
       geocoder.geocode({ address: address }, (results, status) => {
         if (status === 'OK' && results && results[0]) {
@@ -35,11 +35,11 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ address }) => {
   }, [address, isLoaded, loadError])
 
   if (loadError) {
-    return <div>Error loading maps</div>
+    return <div className="h-full flex items-center justify-center">Error loading maps</div>
   }
 
   if (!isLoaded) {
-    return <div>Loading maps</div>
+    return <div className="h-full flex items-center justify-center">Loading maps</div>
   }
 
   return (
@@ -48,7 +48,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ address }) => {
       center={center}
       zoom={15}
     >
-      <Marker position={center} />
+      {center.lat !== 0 && center.lng !== 0 && <Marker position={center} />}
     </GoogleMap>
   )
 }
