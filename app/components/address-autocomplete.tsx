@@ -18,7 +18,7 @@ export function AddressAutocomplete({ onAddressSelect }: AddressAutocompleteProp
       return
     }
 
-    const options = {
+    const options: google.maps.places.AutocompleteOptions = {
       fields: ["formatted_address", "geometry", "name"],
       strictBounds: false,
       types: ["address"],
@@ -27,17 +27,22 @@ export function AddressAutocomplete({ onAddressSelect }: AddressAutocompleteProp
     if (inputRef.current) {
       autoCompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, options)
 
-      autoCompleteRef.current.addListener("place_changed", () => {
-        const place = autoCompleteRef.current?.getPlace()
-        if (place && place.formatted_address) {
-          onAddressSelect(place.formatted_address)
+      const listener = autoCompleteRef.current.addListener("place_changed", () => {
+        if (autoCompleteRef.current) {
+          const place = autoCompleteRef.current.getPlace()
+          if (place && place.formatted_address) {
+            onAddressSelect(place.formatted_address)
+          }
         }
       })
-    }
 
-    return () => {
-      if (autoCompleteRef.current) {
-        window.google.maps.event.clearInstanceListeners(autoCompleteRef.current)
+      return () => {
+        if (listener) {
+          window.google.maps.event.removeListener(listener)
+        }
+        if (autoCompleteRef.current) {
+          window.google.maps.event.clearInstanceListeners(autoCompleteRef.current)
+        }
       }
     }
   }, [onAddressSelect])
