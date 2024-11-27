@@ -8,6 +8,7 @@ import { Button } from "../../components/ui/button"
 import { Home, Building2, Factory, Map, Pencil } from 'lucide-react'
 
 const ProjectTypeSelector = () => {
+  console.log('ProjectTypeSelector rendering');
   const [selectedType, setSelectedType] = React.useState("")
 
   const projectTypes = [
