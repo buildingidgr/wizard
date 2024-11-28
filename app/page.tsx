@@ -22,6 +22,7 @@ export default function Home() {
   const [projectDetails, setProjectDetails] = useState<any>(null)
   const [contactDetails, setContactDetails] = useState<{ fullName: string; email: string; phone: string } | null>(null)
   const [initialRequestTime, setInitialRequestTime] = useState<number | null>(null)
+  const [projectData, setProjectData] = useState<any>(null)
 
   const handleStartForm = () => {
     setStep('type')
@@ -40,6 +41,15 @@ export default function Home() {
 
   const handleProjectDetailsSubmit = (details: any) => {
     setProjectDetails(details)
+    setProjectData({
+      projectType,
+      location: {
+        address,
+        coordinates
+      },
+      projectDetails: details,
+      client: contactDetails // This will be updated in PinVerificationForm
+    })
     setStep('contact')
   }
 
@@ -112,6 +122,7 @@ export default function Home() {
             phoneNumber={contactDetails!.phone}
             initialRequestTime={initialRequestTime!}
             onVerificationComplete={handleVerificationComplete}
+            projectData={projectData}
           />
         )
       case 'complete':

@@ -15,9 +15,15 @@ interface PinVerificationFormProps {
   phoneNumber: string;
   initialRequestTime: number;
   onVerificationComplete: () => void;
+  projectData: any; // Add this prop to receive all project data
 }
 
-const PinVerificationForm: React.FC<PinVerificationFormProps> = ({ phoneNumber, initialRequestTime, onVerificationComplete }) => {
+const PinVerificationForm: React.FC<PinVerificationFormProps> = ({ 
+  phoneNumber, 
+  initialRequestTime, 
+  onVerificationComplete,
+  projectData 
+}) => {
   const [pin, setPin] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [canRequestNewPin, setCanRequestNewPin] = useState(false)
@@ -49,7 +55,7 @@ const PinVerificationForm: React.FC<PinVerificationFormProps> = ({ phoneNumber, 
     }
 
     try {
-      const response = await fetch('/api/verify-pin', {
+      const verifyResponse = await fetch('/api/verify-pin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,10 +63,30 @@ const PinVerificationForm: React.FC<PinVerificationFormProps> = ({ phoneNumber, 
         body: JSON.stringify({ phoneNumber, pin }),
       })
 
-      if (response.ok) {
-        onVerificationComplete()
+      if (verifyResponse.ok) {
+        // PIN verified successfully, now send the webhook
+        const webhookResponse = await fetch('/api/send-webhook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...projectData,
+            client: {
+              ...projectData.client,
+              phone: phoneNumber,
+              verificationStatus: "verified"
+            }
+          }),
+        })
+
+        if (webhookResponse.ok) {
+          onVerificationComplete()
+        } else {
+          setError('Failed to submit project data. Please try again.')
+        }
       } else {
-        const data = await response.json()
+        const data = await verifyResponse.json()
         setError(data.error || 'Failed to verify PIN. Please try again.')
       }
     } catch (err) {
