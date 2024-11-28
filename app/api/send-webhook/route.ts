@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const webhookUrl = process.env.WEBHOOK_URL
+    const webhookUrl = `${process.env.WEBHOOK_URL}/webhook/opportunity`
     if (!webhookUrl) {
       console.error('Webhook URL is not defined')
       return NextResponse.json({ error: 'Webhook URL is not defined' }, { status: 500 })
