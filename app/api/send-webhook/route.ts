@@ -28,9 +28,11 @@ export async function POST(request: Request) {
   try {
     const webhookUrl = process.env.WEBHOOK_URL
     if (!webhookUrl) {
-      throw new Error('Webhook URL is not defined')
+      console.error('Webhook URL is not defined')
+      return NextResponse.json({ error: 'Webhook URL is not defined' }, { status: 500 })
     }
 
+    console.log('Sending webhook to:', webhookUrl)
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
@@ -40,9 +42,11 @@ export async function POST(request: Request) {
     })
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      console.error(`Webhook request failed with status ${response.status}:`, await response.text())
+      return NextResponse.json({ error: `Webhook request failed with status ${response.status}` }, { status: response.status })
     }
 
+    console.log('Webhook sent successfully')
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error sending webhook:', error)
