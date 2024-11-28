@@ -15,7 +15,7 @@ interface PinVerificationFormProps {
   phoneNumber: string;
   initialRequestTime: number;
   onVerificationComplete: () => void;
-  projectData: any; // Add this prop to receive all project data
+  projectData: any;
 }
 
 const PinVerificationForm: React.FC<PinVerificationFormProps> = ({ 
