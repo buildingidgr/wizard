@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from 'react'
-import { StepContainer } from "../shared/StepContainer"
-import { ProgressBar } from "../shared/ProgressBar"
-import { StepHeader } from "../shared/StepHeader"
-import { StepNavigation } from "../shared/StepNavigation"
+import { StepContainer } from "../../shared/StepContainer"
+import { ProgressBar } from "../../shared/ProgressBar"
+import { StepHeader } from "../../shared/StepHeader"
+import { StepNavigation } from "../../shared/StepNavigation"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import PhoneInput from "@/components/ui/phone-input"
+import { PhoneInput } from "@/components/ui/phone-input"
 import { cn } from "@/lib/utils"
 import { User, Mail, Phone, Shield, CheckCircle2, AlertCircle } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -82,7 +83,10 @@ export const ContactStep = ({
     }
   }
 
-  const handlePhoneChange = (value: string, isValid: boolean, error?: string) => {
+  const handlePhoneChange = (value: string) => {
+    const isValid = value.length >= 10
+    const error = isValid ? '' : 'Μη έγκυρος αριθμός τηλεφώνου'
+    
     setLocalDetails(prev => ({ 
       ...prev, 
       phone: value || '',
@@ -91,7 +95,7 @@ export const ContactStep = ({
     setIsPhoneValid(isValid)
     setErrors(prev => ({ 
       ...prev, 
-      phone: error || ''
+      phone: error
     }))
   }
 
@@ -281,14 +285,12 @@ export const ContactStep = ({
                   <PhoneInput
                     value={localDetails.phone}
                     onChange={handlePhoneChange}
-                    defaultCountry="GR"
-                    international
-                    aria-label="Κινητό τηλέφωνο"
+                    aria-label="Τηλέφωνο"
                     onFocus={() => setFocusedField('phone')}
                     onBlur={() => setFocusedField(null)}
                     className={cn(
-                      "pl-10",
-                      errors.phone && "[&>*]:border-destructive [&>*]:focus-visible:ring-destructive"
+                      "pl-10 pr-10",
+                      errors.phone && "border-destructive focus-visible:ring-destructive"
                     )}
                   />
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
