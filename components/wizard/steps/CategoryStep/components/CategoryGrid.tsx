@@ -4,6 +4,7 @@ import { DrawerSelect, DrawerSelectItem } from "@/components/ui/drawer-select"
 import { cn } from "@/lib/utils"
 import { Check, ChevronRight } from "lucide-react"
 import { motion } from "framer-motion"
+import Image from 'next/image'
 
 interface Category {
   title: string
@@ -47,17 +48,12 @@ export const CategoryGrid = ({
                 : "border-border/40 hover:border-border hover:bg-accent/5"
             )}
           >
-            <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-background/50">
-              <div className="absolute inset-0 bg-gradient-to-t from-background/10 to-transparent" />
-              <img 
-                src={category.imageSrc} 
+            <div className="relative w-full h-32 rounded-lg overflow-hidden">
+              <Image
+                src={category.imageSrc}
                 alt={category.title}
-                className={cn(
-                  "w-full h-full object-cover",
-                  "transition-all duration-500 ease-out",
-                  "group-hover:scale-[1.03]",
-                  selectedCategory === category.title && "saturate-[1.1]"
-                )}
+                fill
+                className="object-cover transition-transform group-hover:scale-105"
               />
             </div>
 

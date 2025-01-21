@@ -1,18 +1,18 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Script from 'next/script'
-import { StepContainer } from "../shared/StepContainer"
-import { ProgressBar } from "../shared/ProgressBar"
-import { StepHeader } from "../shared/StepHeader"
-import { StepNavigation } from "../shared/StepNavigation"
-import { Map } from "./components/Map"
-import { AddressAutocomplete } from "@/components/AddressAutocomplete"
+import { AddressAutocomplete } from '@/components/AddressAutocomplete'
+import { StepContainer } from "../../shared/StepContainer"
+import { ProgressBar } from "../../shared/ProgressBar"
+import { StepHeader } from "../../shared/StepHeader"
+import { StepNavigation } from "../../shared/StepNavigation"
+import { Map } from "./Map"
 
 interface LocationStepProps {
   address: string
   selectedAddressData: google.maps.places.PlaceResult | null
-  onAddressChange: (value: string, placeData?: google.maps.places.PlaceResult) => void
+  onAddressChange: (address: string, location?: google.maps.LatLngLiteral) => void
   onContinue: () => void
   onBack: () => void
 }
@@ -26,14 +26,14 @@ export const LocationStep = ({
 }: LocationStepProps) => {
   const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false)
   const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral | null>(null)
+  const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLngLiteral | null>(null)
 
   const handleAddressSelect = (value: string, placeData?: google.maps.places.PlaceResult) => {
-    onAddressChange(value, placeData)
-    if (placeData?.geometry?.location) {
-      setMapCenter({
-        lat: placeData.geometry.location.lat(),
-        lng: placeData.geometry.location.lng()
-      })
+    const location = placeData?.geometry?.location?.toJSON()
+    onAddressChange(value, location)
+    if (location) {
+      setMapCenter(location)
+      setSelectedLocation(location)
     }
   }
 

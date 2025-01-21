@@ -10,9 +10,12 @@ import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { FileText, Lightbulb, AlertCircle } from "lucide-react"
 import { motion } from "framer-motion"
+import { Button } from "@/components/ui/button"
+import { ArrowLeft } from "lucide-react"
+import { ProgressSteps } from "@/components/wizard/shared/ProgressSteps"
 
 interface ProjectInfoStepProps {
-  info: string
+  additionalInfo: string
   onInfoChange: (info: string) => void
   onContinue: () => void
   onBack: () => void
@@ -46,13 +49,13 @@ const examples = [
 ]
 
 export const ProjectInfoStep = ({
-  info,
+  additionalInfo,
   onInfoChange,
   onContinue,
   onBack
 }: ProjectInfoStepProps) => {
-  const [localInfo, setLocalInfo] = useState(info)
-  const [wordCount, setWordCount] = useState(() => info.trim().split(/\s+/).filter(Boolean).length)
+  const [localInfo, setLocalInfo] = useState(additionalInfo)
+  const [wordCount, setWordCount] = useState(() => additionalInfo.trim().split(/\s+/).filter(Boolean).length)
 
   const handleInfoChange = (value: string) => {
     setLocalInfo(value)
@@ -65,154 +68,49 @@ export const ProjectInfoStep = ({
   }
 
   return (
-    <StepContainer>
-      <ProgressBar currentStep={2} />
-      <div className="space-y-8">
-        <StepHeader 
-          step={3} 
-          title="Περιγράψτε το έργο σας"
-          subtitle="Πείτε μας τι θέλετε να κάνετε"
-        />
-        
-        <div className="grid gap-6">
-          <Card className="p-6 space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-primary/5 text-primary">
-                <FileText size={20} />
-              </div>
-              <div className="space-y-1.5 flex-1">
-                <h3 className="font-medium text-base">
-                  Περιγραφή έργου
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Μιλήστε μας για το έργο σας με απλά λόγια - όπως θα το εξηγούσατε σε έναν φίλο σας
-                </p>
-              </div>
-            </div>
-
-            {!localInfo.trim() && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 rounded-lg p-3">
-                <AlertCircle size={16} className="text-primary shrink-0" />
-                <p>Για παράδειγμα: "Θέλω να ανακαινίσω την κουζίνα μου που είναι 15τμ. Χρειάζεται αλλαγή πλακιδίων, ντουλαπιών και ηλεκτρολογικής εγκατάστασης"</p>
-              </div>
-            )}
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-2"
+    <div className="flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-md space-y-6">
+        <ProgressSteps currentStep={2} />
+        <div className="space-y-6">
+          <div className="space-y-2 text-center">
+            <span className="text-sm text-muted-foreground">
+              Βήμα 3: Πληροφορίες έργου
+            </span>
+            <h1 className="text-3xl font-bold">
+              Περιγράψτε το έργο σας
+            </h1>
+          </div>
+          <div className="space-y-4">
+            <Textarea
+              placeholder="Περιγράψτε τις απαιτήσεις του έργου σας..."
+              value={localInfo}
+              onChange={(e) => handleInfoChange(e.target.value)}
+              className="min-h-[200px]"
+            />
+            <p className="text-sm text-muted-foreground">
+              Περιγράψτε με λεπτομέρειες τις απαιτήσεις του έργου σας. Για παράδειγμα: &quot;Χρειάζομαι έναν μηχανικό για την επίβλεψη ανακαίνισης διαμερίσματος 80τμ&quot;
+            </p>
+          </div>
+          <div className="flex gap-4">
+            <Button 
+              onClick={handleSubmit}
+              disabled={!localInfo.trim() || wordCount < 10}
+              className="w-full"
+              size="lg"
             >
-              <Textarea
-                placeholder="Περιγράψτε με δικά σας λόγια τι ακριβώς θέλετε να κάνετε..."
-                value={localInfo}
-                onChange={(e) => handleInfoChange(e.target.value)}
-                className={cn(
-                  "min-h-[200px] resize-y",
-                  "focus:ring-offset-0",
-                  "placeholder:text-muted-foreground/60"
-                )}
-              />
-              <div className="flex justify-end">
-                <span className={cn(
-                  "text-xs",
-                  wordCount < 20 ? "text-destructive" : "text-muted-foreground"
-                )}>
-                  {wordCount} λέξεις {wordCount < 20 && "(προτείνονται τουλάχιστον 20 για καλύτερη κατανόηση)"}
-                </span>
-              </div>
-            </motion.div>
-          </Card>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            <Card className="p-6 space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-primary/5 text-primary">
-                  <Lightbulb size={20} />
-                </div>
-                <div className="space-y-1.5 flex-1">
-                  <h3 className="font-medium text-base">
-                    Χρήσιμες πληροφορίες που μπορείτε να αναφέρετε
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Κάντε κλικ σε οποιοδήποτε παράδειγμα για να το προσθέσετε στην περιγραφή σας
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid gap-4">
-                {[
-                  {
-                    title: "Βασικές πληροφορίες",
-                    examples: [
-                      "Το σπίτι μου είναι 25 ετών και θέλω να το ανακαινίσω",
-                      "Έχω ένα οικόπεδο και θέλω να χτίσω ένα σπίτι",
-                      "Θέλω να κάνω μια προσθήκη στο υπάρχον σπίτι μου"
-                    ]
-                  },
-                  {
-                    title: "Μεγέθη και χώροι",
-                    examples: [
-                      "Το διαμέρισμα είναι 85τμ με 2 υπνοδωμάτια και σαλόνι",
-                      "Ο χώρος που θέλω να ανακαινίσω είναι η κουζίνα 12τμ",
-                      "Έχω μπαλκόνι 20τμ και θέλω να το κλείσω"
-                    ]
-                  },
-                  {
-                    title: "Ειδικές ανάγκες",
-                    examples: [
-                      "Θέλω να εξοικονομώ ενέργεια με καλύτερη μόνωση",
-                      "Χρειάζομαι πρόσβαση για αναπηρικό αμαξίδιο",
-                      "Θέλω να αξιοποιήσω το φυσικό φως όσο γίνεται"
-                    ]
-                  },
-                  {
-                    title: "Προτιμήσεις & προϋπολογισμός",
-                    examples: [
-                      "Προτιμώ μοντέρνο στυλ με απλές γραμμές",
-                      "Θέλω οικονομικές λύσεις χωρίς να θυσιάσω την ποιότητα",
-                      "Με ενδιαφέρουν οικολογικά υλικά"
-                    ]
-                  }
-                ].map((category, index) => (
-                  <motion.div
-                    key={category.title}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="space-y-2"
-                  >
-                    <h4 className="text-sm font-medium text-foreground/80">
-                      {category.title}
-                    </h4>
-                    <div className="grid gap-2">
-                      {category.examples.map((example, i) => (
-                        <div 
-                          key={i}
-                          className="text-sm text-muted-foreground bg-muted/30 rounded-md p-2 cursor-pointer hover:bg-muted/50 transition-colors"
-                          onClick={() => handleInfoChange(localInfo ? `${localInfo}\n${example}` : example)}
-                        >
-                          {example}
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </Card>
-          </motion.div>
+              Επιβεβαίωση
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={onBack}
+              className="flex items-center justify-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Επιστροφή
+            </Button>
+          </div>
         </div>
-
-        <StepNavigation
-          onContinue={handleSubmit}
-          onBack={onBack}
-          disabled={!localInfo.trim() || wordCount < 10}
-        />
       </div>
-    </StepContainer>
+    </div>
   )
 } 

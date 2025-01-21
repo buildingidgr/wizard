@@ -1,23 +1,26 @@
 "use client"
 
 import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { ArrowLeft } from 'lucide-react'
+import { ProgressSteps } from '@/components/wizard/shared/ProgressSteps'
+import { VerificationModal } from '@/components/ui/verification-modal'
 import { StepContainer } from "../shared/StepContainer"
 import { StepNavigation } from "../shared/StepNavigation"
-import { Card } from "@/components/ui/card"
 import { submitProject } from "@/lib/services/projectService"
 import { toast } from "sonner"
-import { VerificationModal } from "@/components/ui/verification-modal"
-import { motion, AnimatePresence } from "framer-motion"
 import { 
   Building2, 
   MapPin, 
-  FileText, 
-  User, 
-  Mail, 
   Phone, 
-  Shield, 
-  CheckCircle2, 
-  AlertTriangle 
+  Mail, 
+  User, 
+  FileText,
+  CheckCircle2,
+  Loader2
 } from "lucide-react"
 
 // Get the skip verification flag from environment variables
@@ -292,7 +295,7 @@ export const ConfirmationStep = ({
               className="flex items-start gap-4 p-4 rounded-lg bg-primary/5"
             >
               <div className="p-2 rounded-lg bg-background text-primary">
-                <Shield size={20} />
+                <Loader2 size={20} className="animate-spin" />
               </div>
               <div className="space-y-1">
                 <h3 className="font-medium text-base flex items-center gap-2">

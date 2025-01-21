@@ -96,6 +96,18 @@ export const IntroContent = () => (
         </div>
       </Card>
     </div>
+
+    <p className="text-sm text-muted-foreground">
+      Κάνοντας κλικ στο κουμπί &quot;Συνέχεια&quot;, συμφωνείτε αυτόματα με τους όρους χρήσης.
+    </p>
+
+    <p className="text-sm text-muted-foreground">
+      Το &quot;Wizard&quot; είναι ένα &quot;step-by-step&quot; εργαλείο που σας βοηθά να καταχωρήσετε το έργο σας.
+    </p>
+
+    <p className="text-sm text-muted-foreground">
+      Πατήστε &quot;Συνέχεια&quot; για να ξεκινήσετε.
+    </p>
   </div>
 )
 

@@ -1,15 +1,14 @@
 "use client"
 
-import { useState, useRef, useEffect, ChangeEvent } from 'react'
+import { useState, useRef, ChangeEvent } from 'react'
 import { ArrowLeft } from 'lucide-react'
-import Image from 'next/image'
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { DrawerSelect, DrawerSelectItem, DrawerSelectItemProps } from "@/components/ui/drawer-select"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { DrawerSelect, DrawerSelectItem } from "@/components/ui/drawer-select"
 import { AddressAutocomplete } from "@/components/AddressAutocomplete"
-import { AddressComponents, ExtendedPlaceResult } from "@/types/address"
+import type { ExtendedPlaceResult } from "@/types/address"
 
 interface Category {
   title: string

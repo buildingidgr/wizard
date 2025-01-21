@@ -1,4 +1,5 @@
 import { CheckCircle2 } from 'lucide-react'
+import Image from 'next/image'
 
 interface WizardSummaryProps {
   currentStep: number
@@ -23,7 +24,13 @@ export function WizardSummary({
     <div className="flex flex-col h-full">
       <div className="space-y-6 mb-12">
         <div className="flex items-center gap-2">
-          <img src="/logo.svg" alt="MechLabs Logo" className="h-8 w-auto" />
+          <Image
+            src="/logo.svg"
+            alt="MechLabs Logo"
+            width={32}
+            height={32}
+            className="h-8 w-auto"
+          />
         </div>
         <div className="space-y-2">
           <blockquote className="text-sm font-medium">
@@ -90,6 +97,20 @@ export function WizardSummary({
           </div>
         )}
       </div>
+
+      <div className="relative w-full h-48 rounded-lg overflow-hidden">
+        <Image
+          src="/images/success.jpg"
+          alt="Success"
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
+
+      <p>
+        Θα λάβετε ένα email επιβεβαίωσης στο &quot;{contactDetails.email}&quot; με όλες τις λεπτομέρειες της καταχώρησής σας.
+      </p>
     </div>
   )
 } 

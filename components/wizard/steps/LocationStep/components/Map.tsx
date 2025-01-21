@@ -149,7 +149,7 @@ export const Map = ({ selectedLocation, onLocationChange }: MapProps) => {
       markerRef.current = null
       setIsMapLoaded(false)
     }
-  }, [])
+  }, [selectedLocation, onLocationChange])
 
   useEffect(() => {
     if (!isMapLoaded || !mapRef.current || !markerRef.current || !selectedLocation) return
