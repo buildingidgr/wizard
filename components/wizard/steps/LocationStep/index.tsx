@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from 'react'
-import Script from 'next/script'
 import { AddressAutocomplete } from '@/components/AddressAutocomplete'
 import { StepContainer } from "../shared/StepContainer"
 import { ProgressBar } from "../shared/ProgressBar"
@@ -10,7 +9,6 @@ import { StepNavigation } from "../shared/StepNavigation"
 import { Map } from "./components/Map"
 import { Card } from "@/components/ui/card"
 import { MapPin, Navigation, Search } from "lucide-react"
-import { motion } from "framer-motion"
 
 interface AddressComponents {
   streetNumber: string;
