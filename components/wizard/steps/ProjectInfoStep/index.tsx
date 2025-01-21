@@ -12,7 +12,7 @@ import { FileText, Lightbulb, AlertCircle } from "lucide-react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
-import { ProgressSteps } from "@/components/wizard/shared/ProgressSteps"
+import { ProgressSteps } from "../../shared/ProgressSteps"
 
 interface ProjectInfoStepProps {
   additionalInfo: string

@@ -3,10 +3,10 @@
 import React, { useState } from 'react'
 import Script from 'next/script'
 import { AddressAutocomplete } from '@/components/AddressAutocomplete'
-import { StepContainer } from "../../shared/StepContainer"
-import { ProgressBar } from "../../shared/ProgressBar"
-import { StepHeader } from "../../shared/StepHeader"
-import { StepNavigation } from "../../shared/StepNavigation"
+import { StepContainer } from "../../../shared/StepContainer"
+import { ProgressBar } from "../../../shared/ProgressBar"
+import { StepHeader } from "../../../shared/StepHeader"
+import { StepNavigation } from "../../../shared/StepNavigation"
 import { Map } from "./Map"
 
 interface LocationStepProps {
