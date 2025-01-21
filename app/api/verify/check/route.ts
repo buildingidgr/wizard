@@ -6,15 +6,8 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
 const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID
 
-// Initialize Twilio client
-if (!accountSid || !authToken || !verifyServiceSid) {
-  throw new Error('Missing required Twilio environment variables')
-}
-
-const client = twilio(accountSid, authToken)
-
-// Ensure verifyServiceSid is a string
-const VERIFY_SERVICE_SID: string = verifyServiceSid
+// Initialize Twilio client if environment variables are available
+const client = accountSid && authToken ? twilio(accountSid, authToken) : null;
 
 interface TwilioError extends Error {
   code?: string;
@@ -23,6 +16,18 @@ interface TwilioError extends Error {
 
 export async function POST(request: Request) {
   try {
+    // Check if Twilio is configured
+    if (!client || !verifyServiceSid) {
+      console.warn('Twilio is not configured. Please set the required environment variables.');
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'SMS verification service is not configured'
+        },
+        { status: 503 }
+      );
+    }
+
     const { phoneNumber, code } = await request.json()
 
     if (!phoneNumber || !code) {
@@ -41,7 +46,7 @@ export async function POST(request: Request) {
     console.log('Checking verification for:', formattedNumber)
 
     const verificationCheck = await client.verify.v2
-      .services(VERIFY_SERVICE_SID)
+      .services(verifyServiceSid)
       .verificationChecks.create({
         to: formattedNumber,
         code: code
