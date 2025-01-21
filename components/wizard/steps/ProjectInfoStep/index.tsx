@@ -1,16 +1,8 @@
 "use client"
 
-import { useState } from 'react'
-import { StepContainer } from "../shared/StepContainer"
-import { ProgressBar } from "../shared/ProgressBar"
-import { StepHeader } from "../shared/StepHeader"
-import { StepNavigation } from "../shared/StepNavigation"
-import { Textarea } from "@/components/ui/textarea"
-import { Card } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
-import { FileText, Lightbulb, AlertCircle } from "lucide-react"
-import { motion } from "framer-motion"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft } from "lucide-react"
 import { ProgressSteps } from "../../shared/ProgressSteps"
 

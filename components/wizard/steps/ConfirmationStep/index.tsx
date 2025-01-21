@@ -2,16 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { ArrowLeft } from 'lucide-react'
-import { ProgressSteps } from '@/components/wizard/shared/ProgressSteps'
-import { VerificationModal } from '@/components/ui/verification-modal'
-import { StepContainer } from "../shared/StepContainer"
-import { StepNavigation } from "../shared/StepNavigation"
-import { submitProject } from "@/lib/services/projectService"
-import { toast } from "sonner"
 import { 
   Building2, 
   MapPin, 
@@ -22,6 +13,11 @@ import {
   CheckCircle2,
   Loader2
 } from "lucide-react"
+import { submitProject } from "@/lib/services/projectService"
+import { toast } from "sonner"
+import { StepContainer } from "../shared/StepContainer"
+import { StepNavigation } from "../shared/StepNavigation"
+import { VerificationModal } from '@/components/ui/verification-modal'
 
 // Get the skip verification flag from environment variables
 const SKIP_VERIFICATION = process.env.NEXT_PUBLIC_SKIP_PHONE_VERIFICATION === 'true'

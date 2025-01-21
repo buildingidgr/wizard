@@ -34,7 +34,7 @@ export function WizardSummary({
         </div>
         <div className="space-y-2">
           <blockquote className="text-sm font-medium">
-            "Προηγμένη σκέψη για σύγχρονες ανάγκες"
+            &quot;Προηγμένη σκέψη για σύγχρονες ανάγκες&quot;
           </blockquote>
           <cite className="block text-sm text-white/70">
             <a href="/engineers" className="hover:underline cursor-pointer">
