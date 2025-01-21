@@ -196,16 +196,19 @@ export default function ProjectWizard() {
   return (
     <GoogleMapsProvider>
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8 lg:py-12">
-          <div className="grid lg:grid-cols-12 gap-8 items-start">
-            {/* Branding on the left */}
-            <div className="lg:col-span-2 lg:sticky lg:top-8 bg-card rounded-lg p-6">
-              <WizardBranding />
-            </div>
-            
-            {/* Main wizard content in the middle */}
+        {/* Sticky top bar */}
+        <div className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm border-b">
+          <div className="container mx-auto px-4 py-4">
+            <WizardBranding />
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid lg:grid-cols-10 gap-8 items-start">
+            {/* Main wizard content */}
             <div className={cn(
-              "lg:sticky lg:top-8 bg-card rounded-lg p-6",
+              "bg-card rounded-lg p-6",
               selectedCategory || address || additionalInfo || contactDetails.fullName
                 ? "lg:col-span-6"
                 : "lg:col-span-10"
@@ -215,7 +218,7 @@ export default function ProjectWizard() {
             
             {/* Progress summary on the right */}
             {(selectedCategory || address || additionalInfo || contactDetails.fullName) && (
-              <div className="lg:col-span-4 lg:sticky lg:top-8 bg-card rounded-lg p-6">
+              <div className="lg:col-span-4 lg:sticky lg:top-28 bg-card rounded-lg p-6">
                 <WizardSummary
                   currentStep={currentStep}
                   selectedCategory={selectedCategory}

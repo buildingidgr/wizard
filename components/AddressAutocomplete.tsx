@@ -32,7 +32,7 @@ export function AddressAutocomplete({ value, onChange, className }: AddressAutoc
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
   const [inputValue, setInputValue] = useState(value)
   const isInitializedRef = useRef(false)
-  const [isSelecting, setIsSelecting] = useState(false)
+  const [internalValue, setInternalValue] = useState(value)
 
   // Initialize Autocomplete only once
   useEffect(() => {
@@ -103,7 +103,6 @@ export function AddressAutocomplete({ value, onChange, className }: AddressAutoc
       return result
     }
 
-    console.log('[Debug] Initializing Autocomplete')
     isInitializedRef.current = true
     
     autocompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
@@ -115,72 +114,58 @@ export function AddressAutocomplete({ value, onChange, className }: AddressAutoc
     const placeChangedListener = () => {
       if (!autocompleteRef.current) return
 
-      console.log('[Debug] Place changed event triggered')
-      setIsSelecting(true)
-
       const place = autocompleteRef.current.getPlace()
-      console.log('[Debug] Raw place data:', place)
 
       if (place?.geometry) {
-        console.log('[Debug] Using place with geometry:', place.geometry.location?.toJSON())
-        const parsedAddress = parseAddressComponents(place.address_components)
+        const parsedAddress = parseAddressComponents(place.address_components, place.formatted_address)
         const placeWithParsedAddress = {
           ...place,
           parsedAddress
         }
         setInputValue(place.formatted_address || '')
+        setInternalValue(place.formatted_address || '')
         onChange(place.formatted_address || '', placeWithParsedAddress)
       } else if (place?.place_id) {
-        console.log('[Debug] Fetching place details for ID:', place.place_id)
         const placesService = new google.maps.places.PlacesService(document.createElement('div'))
         placesService.getDetails({
           placeId: place.place_id,
           fields: ['address_components', 'formatted_address', 'geometry', 'name']
         }, (result, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && result) {
-            console.log('[Debug] Place details fetched:', result)
-            const parsedAddress = parseAddressComponents(result.address_components)
+            const parsedAddress = parseAddressComponents(result.address_components, result.formatted_address)
             const resultWithParsedAddress = {
               ...result,
               parsedAddress
             }
             setInputValue(result.formatted_address || '')
+            setInternalValue(result.formatted_address || '')
             onChange(result.formatted_address || '', resultWithParsedAddress)
           }
         })
       }
-
-      // Reset selection state after a short delay
-      setTimeout(() => {
-        setIsSelecting(false)
-      }, 100)
     }
 
     autocompleteRef.current.addListener('place_changed', placeChangedListener)
 
     return () => {
       if (autocompleteRef.current) {
-        console.log('[Debug] Final cleanup of Autocomplete')
         google.maps.event.clearInstanceListeners(autocompleteRef.current)
         isInitializedRef.current = false
       }
     }
   }, [isLoaded, onChange])
 
-  // Sync input value with prop value when not selecting
+  // Keep input value in sync with prop
   useEffect(() => {
-    if (!isSelecting) {
+    if (value !== internalValue) {
       setInputValue(value)
+      setInternalValue(value)
     }
-  }, [value, isSelecting])
+  }, [value, internalValue])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isSelecting) return
-    
     const newValue = e.target.value
-    console.log('[Debug] Input change:', newValue)
     setInputValue(newValue)
-    onChange(newValue, undefined)
   }
 
   if (error) {

@@ -52,9 +52,19 @@ export const ProjectInfoStep = ({
               onChange={(e) => handleInfoChange(e.target.value)}
               className="min-h-[200px]"
             />
-            <p className="text-sm text-muted-foreground">
-              Περιγράψτε με λεπτομέρειες τις απαιτήσεις του έργου σας. Για παράδειγμα: &quot;Χρειάζομαι έναν μηχανικό για την επίβλεψη ανακαίνισης διαμερίσματος 80τμ&quot;
-            </p>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-sm">
+                <p className="text-muted-foreground">
+                  Ελάχιστο όριο: 10 λέξεις
+                </p>
+                <p className={`${wordCount < 10 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  {wordCount} {wordCount === 1 ? 'λέξη' : 'λέξεις'}
+                </p>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Περιγράψτε με λεπτομέρειες τις απαιτήσεις του έργου σας. Για παράδειγμα: &quot;Χρειάζομαι έναν μηχανικό για την επίβλεψη ανακαίνισης διαμερίσματος 80τμ&quot;
+              </p>
+            </div>
           </div>
           <div className="flex gap-4">
             <Button 

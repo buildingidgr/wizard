@@ -54,7 +54,7 @@ export function WizardSummary({
           </div>
         )}
 
-        {currentStep > 4 && contactDetails.fullName && (
+        {currentStep > 5 && contactDetails.fullName && (
           <div className="space-y-2">
             <h3 className="text-sm font-medium text-muted-foreground">Στοιχεία Επικοινωνίας</h3>
             <div className="space-y-1">
@@ -75,7 +75,7 @@ export function WizardSummary({
         )}
       </div>
 
-      {currentStep > 4 && contactDetails.email && (
+      {currentStep > 5 && contactDetails.email && (
         <p className="mt-4 text-muted-foreground">
           Θα λάβετε ένα email επιβεβαίωσης στο &quot;{contactDetails.email}&quot; με όλες τις λεπτομέρειες της καταχώρησής σας.
         </p>
