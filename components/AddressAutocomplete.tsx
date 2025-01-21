@@ -34,74 +34,74 @@ export function AddressAutocomplete({ value, onChange, className }: AddressAutoc
   const isInitializedRef = useRef(false)
   const [isSelecting, setIsSelecting] = useState(false)
 
-  const parseAddressComponents = (components: google.maps.GeocoderAddressComponent[] | undefined, formatted_address: string = ''): AddressComponents => {
-    const result: AddressComponents = {
-      streetNumber: '',
-      route: '',
-      streetAddress: '',
-      subpremise: '',
-      locality: '',
-      sublocality: '',
-      administrativeAreaLevel1: '',
-      administrativeAreaLevel2: '',
-      administrativeAreaLevel3: '',
-      country: '',
-      countryCode: '',
-      postalCode: '',
-      formattedAddress: formatted_address
-    }
-
-    if (!components) return result
-
-    for (const component of components) {
-      const types = component.types
-
-      if (types.includes('street_number')) {
-        result.streetNumber = component.long_name
-      }
-      if (types.includes('route')) {
-        result.route = component.long_name
-      }
-      if (types.includes('subpremise')) {
-        result.subpremise = component.long_name
-      }
-      if (types.includes('locality')) {
-        result.locality = component.long_name
-      }
-      if (types.includes('sublocality')) {
-        result.sublocality = component.long_name
-      }
-      if (types.includes('administrative_area_level_1')) {
-        result.administrativeAreaLevel1 = component.long_name
-      }
-      if (types.includes('administrative_area_level_2')) {
-        result.administrativeAreaLevel2 = component.long_name
-      }
-      if (types.includes('administrative_area_level_3')) {
-        result.administrativeAreaLevel3 = component.long_name
-      }
-      if (types.includes('country')) {
-        result.country = component.long_name
-        result.countryCode = component.short_name
-      }
-      if (types.includes('postal_code')) {
-        result.postalCode = component.long_name
-      }
-    }
-
-    // Combine street number and route for full street address
-    result.streetAddress = [result.streetNumber, result.route]
-      .filter(Boolean)
-      .join(' ')
-      .trim()
-
-    console.log('[Debug] Parsed address components:', result)
-    return result
-  }
-
   // Initialize Autocomplete only once
   useEffect(() => {
     if (!isLoaded || !inputRef.current || isInitializedRef.current) return
+
+    const parseAddressComponents = (components: google.maps.GeocoderAddressComponent[] | undefined, formatted_address: string = ''): AddressComponents => {
+      const result: AddressComponents = {
+        streetNumber: '',
+        route: '',
+        streetAddress: '',
+        subpremise: '',
+        locality: '',
+        sublocality: '',
+        administrativeAreaLevel1: '',
+        administrativeAreaLevel2: '',
+        administrativeAreaLevel3: '',
+        country: '',
+        countryCode: '',
+        postalCode: '',
+        formattedAddress: formatted_address
+      }
+
+      if (!components) return result
+
+      for (const component of components) {
+        const types = component.types
+
+        if (types.includes('street_number')) {
+          result.streetNumber = component.long_name
+        }
+        if (types.includes('route')) {
+          result.route = component.long_name
+        }
+        if (types.includes('subpremise')) {
+          result.subpremise = component.long_name
+        }
+        if (types.includes('locality')) {
+          result.locality = component.long_name
+        }
+        if (types.includes('sublocality')) {
+          result.sublocality = component.long_name
+        }
+        if (types.includes('administrative_area_level_1')) {
+          result.administrativeAreaLevel1 = component.long_name
+        }
+        if (types.includes('administrative_area_level_2')) {
+          result.administrativeAreaLevel2 = component.long_name
+        }
+        if (types.includes('administrative_area_level_3')) {
+          result.administrativeAreaLevel3 = component.long_name
+        }
+        if (types.includes('country')) {
+          result.country = component.long_name
+          result.countryCode = component.short_name
+        }
+        if (types.includes('postal_code')) {
+          result.postalCode = component.long_name
+        }
+      }
+
+      // Combine street number and route for full street address
+      result.streetAddress = [result.streetNumber, result.route]
+        .filter(Boolean)
+        .join(' ')
+        .trim()
+
+      console.log('[Debug] Parsed address components:', result)
+      return result
+    }
 
     console.log('[Debug] Initializing Autocomplete')
     isInitializedRef.current = true
@@ -165,7 +165,7 @@ export function AddressAutocomplete({ value, onChange, className }: AddressAutoc
         isInitializedRef.current = false
       }
     }
-  }, [isLoaded, onChange, parseAddressComponents])
+  }, [isLoaded, onChange])
 
   // Sync input value with prop value when not selecting
   useEffect(() => {

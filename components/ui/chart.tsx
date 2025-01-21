@@ -69,7 +69,7 @@ ChartContainer.displayName = "Chart"
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
-    ([_, config]) => config.theme || config.color
+    ([, config]) => config.theme || config.color
   )
 
   if (!colorConfig.length) {
@@ -318,11 +318,11 @@ ChartLegendContent.displayName = "ChartLegend"
 
 function getPayloadConfigFromPayload(
   config: ChartConfig,
-  payload: any,
+  payload: { dataKey?: string | number } | null,
   key: string
 ) {
   if (!payload || !key) return null
-  return config[key] || config[payload.dataKey] || null
+  return config[key] || (payload.dataKey ? config[String(payload.dataKey)] : null)
 }
 
 export {

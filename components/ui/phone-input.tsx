@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { ChevronDown, Phone } from "lucide-react"
 import React, { forwardRef } from "react"
-import PhoneNumberInput, { Props, DefaultInputComponentProps } from 'react-phone-number-input'
+import PhoneNumberInput, { Props } from 'react-phone-number-input'
 import { isPossiblePhoneNumber, validatePhoneNumberLength } from 'libphonenumber-js'
 import flags from "react-phone-number-input/flags"
 
@@ -44,9 +44,13 @@ const PhoneInput = forwardRef<HTMLInputElement, CustomPhoneInputProps>(
       onChange(formattedValue, isValid, error)
     }
 
-    // TODO: The ref type is complex and doesn't match well with HTMLInputElement.
-    // We've tried several approaches to type it correctly but none worked well.
-    // This should be revisited when the library provides better TypeScript support.
+    // TODO: The ref type is complex due to the library's component structure.
+    // We've tried several approaches including:
+    // - React.Ref<typeof PhoneNumberInput>
+    // - React.Ref<PhoneNumberInput>
+    // - React.LegacyRef<typeof PhoneNumberInput>
+    // None of these work correctly with the component's internal types.
+    // Using 'any' for now until we can find a better solution or the library improves its TypeScript support.
     return (
       <PhoneNumberInput
         ref={ref as React.Ref<any>}

@@ -173,7 +173,6 @@ export const LocationStep = ({
   onBack
 }: LocationStepProps) => {
   const mapContainerRef = useRef(null)
-  const [isFullscreen, setIsFullscreen] = useState(false)
 
   return (
     <div className="flex flex-col items-center justify-center p-6">
@@ -197,9 +196,7 @@ export const LocationStep = ({
             <div className="relative" ref={mapContainerRef}>
               <div 
                 id="map"
-                className={`w-full rounded-lg overflow-hidden border shadow-sm transition-all ${
-                  isFullscreen ? 'h-screen' : 'h-[300px]'
-                }`}
+                className="w-full rounded-lg overflow-hidden border shadow-sm transition-all h-[300px]"
               />
             </div>
           </div>
