@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
-
+import type { TooltipProps } from "recharts"
 import { cn } from "@/lib/utils"
 
 // Format: { THEME_NAME: CSS_SELECTOR }
@@ -318,11 +318,13 @@ ChartLegendContent.displayName = "ChartLegend"
 
 function getPayloadConfigFromPayload(
   config: ChartConfig,
-  payload: { dataKey?: string | number } | null,
+  payload: any,
   key: string
 ) {
-  if (!payload || !key) return null
-  return config[key] || (payload.dataKey ? config[String(payload.dataKey)] : null)
+  if (!payload) return config[key]
+  const dataKey = String(payload.dataKey || key)
+  const name = String(payload.name || key)
+  return config[dataKey] || config[name] || config[key]
 }
 
 export {
