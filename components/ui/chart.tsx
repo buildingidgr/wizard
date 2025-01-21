@@ -18,6 +18,17 @@ export type ChartConfig = {
   )
 }
 
+type ValueType = string | number | Array<string | number>
+type NameType = string | number
+
+interface ChartPayload {
+  dataKey?: string | number | ((obj: unknown) => unknown)
+  name?: NameType
+  color?: string
+  value?: ValueType
+  payload?: Record<string, unknown>
+}
+
 type ChartContextProps = {
   config: ChartConfig
 }
@@ -318,7 +329,7 @@ ChartLegendContent.displayName = "ChartLegend"
 
 function getPayloadConfigFromPayload(
   config: ChartConfig,
-  payload: any,
+  payload: ChartPayload | null | undefined,
   key: string
 ) {
   if (!payload) return config[key]
