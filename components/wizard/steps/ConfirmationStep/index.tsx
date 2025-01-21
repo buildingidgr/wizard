@@ -23,24 +23,50 @@ import {
 // Get the skip verification flag from environment variables
 const SKIP_VERIFICATION = process.env.NEXT_PUBLIC_SKIP_PHONE_VERIFICATION === 'true'
 
+interface AddressComponents {
+  streetNumber: string;
+  route: string;
+  streetAddress: string;
+  subpremise: string;
+  locality: string;
+  sublocality: string;
+  administrativeAreaLevel1: string;
+  administrativeAreaLevel2: string;
+  administrativeAreaLevel3: string;
+  country: string;
+  countryCode: string;
+  postalCode: string;
+  formattedAddress: string;
+}
+
+interface AddressData {
+  geometry?: {
+    coordinates?: {
+      lat: number;
+      lng: number;
+    };
+  };
+  parsedAddress?: AddressComponents;
+}
+
 interface ConfirmationStepProps {
-  selectedCategory: string
-  address: string
-  selectedAddressData: any
-  additionalInfo: string
+  selectedCategory: string;
+  address: string;
+  selectedAddressData: AddressData | null;
+  additionalInfo: string;
   contactDetails: {
-    fullName: string
-    email: string
-    phone: string
-    countryCode: string
-  }
-  onConfirm: () => void
-  onBack: () => void
-  onReset: () => void
+    fullName: string;
+    email: string;
+    phone: string;
+    countryCode: string;
+  };
+  onConfirm: () => void;
+  onBack: () => void;
+  onReset: () => void;
   categories: Array<{
-    title: string
-    description: string
-  }>
+    title: string;
+    description: string;
+  }>;
 }
 
 export const ConfirmationStep = ({

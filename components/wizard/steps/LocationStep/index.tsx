@@ -12,28 +12,32 @@ import { Card } from "@/components/ui/card"
 import { MapPin, Navigation, Search } from "lucide-react"
 import { motion } from "framer-motion"
 
-interface LocationStepProps {
-  address: string
-  selectedAddressData: any
-  onAddressChange: (value: string, placeData?: any) => void
-  onContinue: () => void
-  onBack: () => void
+interface AddressComponents {
+  streetNumber: string;
+  route: string;
+  streetAddress: string;
+  subpremise: string;
+  locality: string;
+  sublocality: string;
+  administrativeAreaLevel1: string;
+  administrativeAreaLevel2: string;
+  administrativeAreaLevel3: string;
+  country: string;
+  countryCode: string;
+  postalCode: string;
+  formattedAddress: string;
 }
 
-interface AddressComponents {
-  streetNumber: string
-  route: string
-  streetAddress: string
-  subpremise: string
-  locality: string
-  sublocality: string
-  administrativeAreaLevel1: string
-  administrativeAreaLevel2: string
-  administrativeAreaLevel3: string
-  country: string
-  countryCode: string
-  postalCode: string
-  formattedAddress: string
+type ExtendedPlaceResult = google.maps.places.PlaceResult & {
+  parsedAddress?: AddressComponents;
+};
+
+interface LocationStepProps {
+  address: string;
+  selectedAddressData: ExtendedPlaceResult | null;
+  onAddressChange: (value: string, placeData?: ExtendedPlaceResult) => void;
+  onContinue: () => void;
+  onBack: () => void;
 }
 
 export const LocationStep = ({
@@ -54,7 +58,7 @@ export const LocationStep = ({
     return null
   })
 
-  const handleAddressSelect = (value: string, placeData?: any) => {
+  const handleAddressSelect = (value: string, placeData?: ExtendedPlaceResult) => {
     if (placeData?.geometry?.location) {
       const coordinates = {
         lat: placeData.geometry.location.lat(),

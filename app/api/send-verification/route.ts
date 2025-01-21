@@ -7,6 +7,11 @@ const client = new Twilio(
   process.env.TWILIO_AUTH_TOKEN!
 );
 
+interface TwilioError extends Error {
+  code?: string;
+  status?: number;
+}
+
 export async function POST(request: Request) {
   try {
     const { phoneNumber } = await request.json();
@@ -25,7 +30,8 @@ export async function POST(request: Request) {
       success: true, 
       status: verification.status 
     });
-  } catch (error: any) {
+  } catch (err) {
+    const error = err as TwilioError;
     console.error('Error sending verification:', error);
     return NextResponse.json(
       { 
@@ -33,7 +39,7 @@ export async function POST(request: Request) {
         error: error.message || 'Failed to send verification code',
         code: error.code
       },
-      { status: 500 }
+      { status: error.status || 500 }
     );
   }
 } 

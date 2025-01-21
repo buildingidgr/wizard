@@ -11,7 +11,7 @@ import { AddressAutocomplete } from "@/components/AddressAutocomplete"
 
 interface LocationStepProps {
   address: string
-  selectedAddressData: any
+  selectedAddressData: google.maps.places.PlaceResult | null
   onAddressChange: (value: string, placeData?: google.maps.places.PlaceResult) => void
   onContinue: () => void
   onBack: () => void

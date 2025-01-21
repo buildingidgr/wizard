@@ -54,11 +54,28 @@ const categories = [
   }
 ]
 
+interface GooglePlaceGeometry {
+  location: {
+    lat: () => number;
+    lng: () => number;
+  };
+}
+
+interface GooglePlaceData {
+  geometry?: GooglePlaceGeometry;
+  formatted_address?: string;
+  address_components?: Array<{
+    long_name: string;
+    short_name: string;
+    types: string[];
+  }>;
+}
+
 export default function ProjectWizard() {
   const [currentStep, setCurrentStep] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState('')
   const [address, setAddress] = useState('')
-  const [selectedAddressData, setSelectedAddressData] = useState<any>(null)
+  const [selectedAddressData, setSelectedAddressData] = useState<GooglePlaceData | null>(null)
   const [additionalInfo, setAdditionalInfo] = useState('')
   const [contactDetails, setContactDetails] = useState({
     fullName: '',
@@ -79,7 +96,7 @@ export default function ProjectWizard() {
     setSelectedCategory(category)
   }
 
-  const handleAddressChange = (value: string, placeData?: any) => {
+  const handleAddressChange = (value: string, placeData?: GooglePlaceData) => {
     console.log('Address change in ProjectWizard:', { value, placeData });
     if (placeData?.geometry?.location) {
       console.log('Location data:', {
@@ -88,7 +105,7 @@ export default function ProjectWizard() {
       });
     }
     setAddress(value);
-    setSelectedAddressData(placeData);
+    setSelectedAddressData(placeData || null);
   }
 
   const handleInfoChange = (info: string) => {

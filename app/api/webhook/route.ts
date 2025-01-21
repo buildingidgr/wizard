@@ -75,6 +75,10 @@ interface TransformedData {
   }
 }
 
+interface WebhookError extends Error {
+  status?: number;
+}
+
 function transformProjectData(data: ProjectData): TransformedData {
   // Split full name into first and last name
   const [firstName = '', lastName = ''] = data.contact.fullName.split(' ')
@@ -139,14 +143,15 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(result)
-  } catch (error: any) {
+  } catch (err) {
+    const error = err as WebhookError
     console.error('Webhook proxy error:', error)
     return NextResponse.json(
       { 
         success: false, 
         error: error.message || 'Failed to forward request to webhook service'
       },
-      { status: 500 }
+      { status: error.status || 500 }
     )
   }
 } 

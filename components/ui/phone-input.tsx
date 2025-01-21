@@ -4,9 +4,11 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { ChevronDown, Phone } from "lucide-react"
 import React, { forwardRef } from "react"
-import PhoneNumberInput, { Props } from 'react-phone-number-input'
+import PhoneNumberInput, { Props, DefaultInputComponentProps } from 'react-phone-number-input'
 import { isPossiblePhoneNumber, validatePhoneNumberLength } from 'libphonenumber-js'
 import flags from "react-phone-number-input/flags"
+
+type PhoneInputComponent = React.ForwardRefExoticComponent<Props<DefaultInputComponentProps>>
 
 interface CustomPhoneInputProps extends Omit<Props<typeof PhoneNumberInput>, 'onChange'> {
   onChange: (value: string, isValid: boolean, error?: string) => void
@@ -35,7 +37,7 @@ const PhoneInput = forwardRef<HTMLInputElement, CustomPhoneInputProps>(
               error = 'Μη έγκυρος αριθμός τηλεφώνου'
             }
           }
-        } catch (e) {
+        } catch {
           error = 'Μη έγκυρος αριθμός τηλεφώνου'
           isValid = false
         }
@@ -44,6 +46,10 @@ const PhoneInput = forwardRef<HTMLInputElement, CustomPhoneInputProps>(
       onChange(formattedValue, isValid, error)
     }
 
+    // TODO: The 'any' type is used here because the PhoneNumberInput component's ref type
+    // is complex and doesn't match well with HTMLInputElement. We've tried several approaches
+    // to type it correctly but none worked well. This should be revisited when the library
+    // provides better TypeScript support.
     return (
       <PhoneNumberInput
         ref={ref as any}
