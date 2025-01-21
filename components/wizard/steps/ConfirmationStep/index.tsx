@@ -80,108 +80,27 @@ export const ConfirmationStep = ({
   categories
 }: ConfirmationStepProps) => {
   const [isVerifying, setIsVerifying] = useState(false)
-  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false)
+  const [isVerified, setIsVerified] = useState(false)
+  const [showVerificationModal, setShowVerificationModal] = useState(false)
   const selectedCategoryData = categories.find(cat => cat.title === selectedCategory)
 
   const handleStartVerification = async () => {
     if (SKIP_VERIFICATION) {
-      // Skip verification and submit directly
-      await handleVerificationComplete()
+      onConfirm()
       return
     }
-
     setIsVerifying(true)
-    try {
-      const response = await fetch('/api/verify/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: contactDetails.phone })
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to send verification code')
-      }
-
-      setIsVerificationModalOpen(true)
-    } catch (error) {
-      toast.error('Σφάλμα κατά την αποστολή του κωδικού επαλήθευσης')
-    } finally {
-      setIsVerifying(false)
-    }
+    setShowVerificationModal(true)
   }
 
-  const handleVerificationComplete = async () => {
-    setIsVerificationModalOpen(false)
-    try {
-      const coordinates = selectedAddressData?.geometry?.coordinates || { lat: 0, lng: 0 }
-      const parsedAddress = selectedAddressData?.parsedAddress || {
-        streetNumber: '',
-        route: '',
-        streetAddress: '',
-        subpremise: '',
-        locality: '',
-        sublocality: '',
-        administrativeAreaLevel1: '',
-        administrativeAreaLevel2: '',
-        administrativeAreaLevel3: '',
-        country: '',
-        countryCode: '',
-        postalCode: '',
-        formattedAddress: ''
-      }
-
-      // Format address as a string for the webhook route
-      const formattedAddress = [
-        parsedAddress.streetAddress,
-        parsedAddress.locality || parsedAddress.sublocality || ''
-      ].filter(Boolean).join(', ')
-
-      const projectData = {
-        project: {
-          category: {
-            title: selectedCategory,
-            description: selectedCategoryData?.description || ''
-          },
-          location: {
-            address: formattedAddress,
-            coordinates: coordinates
-          },
-          details: {
-            description: additionalInfo
-          }
-        },
-        contact: {
-          fullName: contactDetails.fullName,
-          email: contactDetails.email,
-          phone: {
-            countryCode: contactDetails.countryCode,
-            number: contactDetails.phone
-          }
-        },
-        metadata: {
-          submittedAt: new Date().toISOString(),
-          locale: 'el-GR',
-          source: 'web_form',
-          version: '1.0.0'
-        }
-      }
-
-      const result = await submitProject(projectData)
-      
-      if (result.success) {
-        toast.success('Το έργο σας καταχωρήθηκε με επιτυχία!')
-        onConfirm()
-      } else {
-        toast.error('Υπήρξε ένα πρόβλημα με την καταχώρηση. Παρακαλώ δοκιμάστε ξανά.')
-      }
-    } catch (error) {
-      toast.error('Υπήρξε ένα πρόβλημα με την καταχώρηση. Παρακαλώ δοκιμάστε ξανά.')
-      console.error('Error submitting project:', error)
-    }
+  const handleVerificationSuccess = () => {
+    setIsVerified(true)
+    setShowVerificationModal(false)
+    onConfirm()
   }
 
   const handleVerificationFailed = () => {
-    setIsVerificationModalOpen(false)
+    setShowVerificationModal(false)
     toast.error('Η επαλήθευση απέτυχε. Παρακαλώ δοκιμάστε ξανά.')
   }
 
@@ -316,10 +235,10 @@ export const ConfirmationStep = ({
 
       {!SKIP_VERIFICATION && (
         <VerificationModal
-          isOpen={isVerificationModalOpen}
-          onClose={() => setIsVerificationModalOpen(false)}
+          isOpen={showVerificationModal}
+          onClose={handleVerificationFailed}
           phoneNumber={contactDetails.phone}
-          onVerificationComplete={handleVerificationComplete}
+          onVerificationComplete={handleVerificationSuccess}
           onTooManyAttempts={onReset}
         />
       )}

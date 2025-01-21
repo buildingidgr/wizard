@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Script from 'next/script'
 import { AddressAutocomplete } from '@/components/AddressAutocomplete'
 import { StepContainer } from "../../../shared/StepContainer"
@@ -8,9 +8,6 @@ import { ProgressBar } from "../../../shared/ProgressBar"
 import { StepHeader } from "../../../shared/StepHeader"
 import { StepNavigation } from "../../../shared/StepNavigation"
 import { Map } from "./Map"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
 
 interface LocationStepProps {
   address: string
@@ -29,17 +26,12 @@ export const LocationStep = ({
 }: LocationStepProps) => {
   const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false)
   const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral | null>(null)
-  const [selectedLocation, setSelectedLocation] = useState<google.maps.LatLngLiteral | null>(null)
-  const [predictions, setPredictions] = useState<google.maps.places.AutocompletePrediction[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
 
   const handleAddressSelect = (value: string, placeData?: google.maps.places.PlaceResult) => {
     const location = placeData?.geometry?.location?.toJSON()
     onAddressChange(value, location)
     if (location) {
       setMapCenter(location)
-      setSelectedLocation(location)
     }
   }
 

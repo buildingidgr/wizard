@@ -15,12 +15,12 @@ export function StepNavigation({
   onContinue,
   onBack,
   disabled = false,
-  continueText = "Επιβεβαίωση",
+  continueText = "Συνέχεια",
   loading = false
 }: StepNavigationProps) {
   return (
     <div className="flex gap-4">
-      <Button 
+      <Button
         onClick={onContinue}
         disabled={disabled || loading}
         className="w-full"
@@ -28,7 +28,7 @@ export function StepNavigation({
       >
         {loading ? "Παρακαλώ περιμένετε..." : continueText}
       </Button>
-      <Button 
+      <Button
         variant="outline"
         onClick={onBack}
         disabled={loading}
