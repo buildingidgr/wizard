@@ -8,6 +8,26 @@ import {
   Calendar,
   MessageCircle
 } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+
+interface IntroFooterProps {
+  onAgreementChange: (agreed: boolean) => void
+}
+
+export const IntroFooter = ({ onAgreementChange }: IntroFooterProps) => (
+  <div className="flex items-start gap-2">
+    <Checkbox
+      id="terms"
+      onCheckedChange={(checked) => onAgreementChange(checked as boolean)}
+    />
+    <label
+      htmlFor="terms"
+      className="text-sm text-muted-foreground leading-relaxed"
+    >
+      Συμφωνώ με τους όρους χρήσης και την πολιτική απορρήτου. Επιτρέπω την επεξεργασία των προσωπικών μου δεδομένων για τους σκοπούς της υπηρεσίας.
+    </label>
+  </div>
+)
 
 export const IntroContent = () => (
   <div className="max-w-3xl mx-auto space-y-8 px-4">
