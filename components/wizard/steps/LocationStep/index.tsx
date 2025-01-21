@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect } from 'react'
-import { useGoogleMaps } from '@/components/providers/GoogleMapsProvider'
+import { useState } from 'react'
+import Script from 'next/script'
+import { AddressAutocomplete } from '@/components/AddressAutocomplete'
 import { StepContainer } from "../shared/StepContainer"
 import { ProgressBar } from "../shared/ProgressBar"
 import { StepHeader } from "../shared/StepHeader"
 import { StepNavigation } from "../shared/StepNavigation"
 import { Map } from "./components/Map"
-import { AddressAutocomplete } from "@/components/AddressAutocomplete"
 import { Card } from "@/components/ui/card"
 import { MapPin, Navigation, Search } from "lucide-react"
 import { motion } from "framer-motion"
@@ -47,7 +47,6 @@ export const LocationStep = ({
   onContinue,
   onBack
 }: LocationStepProps) => {
-  const { isLoaded } = useGoogleMaps()
   const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral | null>(() => {
     if (selectedAddressData?.geometry?.location) {
       return {
@@ -215,54 +214,38 @@ export const LocationStep = ({
               </div>
             </div>
 
-            {isLoaded && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <AddressAutocomplete
-                  value={address}
-                  onChange={handleAddressSelect}
-                  className="w-full"
-                />
-              </motion.div>
-            )}
+            <AddressAutocomplete
+              value={address}
+              onChange={handleAddressSelect}
+              className="w-full"
+            />
           </Card>
 
-          {isLoaded && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-            >
-              <Card className="p-6 space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-2 rounded-lg bg-primary/5 text-primary">
-                    <MapPin size={20} />
-                  </div>
-                  <div className="space-y-1.5 flex-1">
-                    <h3 className="font-medium text-base">
-                      Επιβεβαίωση τοποθεσίας
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Μετακινήστε τον δείκτη για να προσαρμόσετε την ακριβή τοποθεσία
-                    </p>
-                  </div>
-                </div>
+          <Card className="p-6 space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded-lg bg-primary/5 text-primary">
+                <MapPin size={20} />
+              </div>
+              <div className="space-y-1.5 flex-1">
+                <h3 className="font-medium text-base">
+                  Επιβεβαίωση τοποθεσίας
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Μετακινήστε τον δείκτη για να προσαρμόσετε την ακριβή τοποθεσία
+                </p>
+              </div>
+            </div>
 
-                <Map
-                  selectedLocation={mapCenter}
-                  onLocationChange={handleMapLocationChange}
-                />
+            <Map
+              selectedLocation={mapCenter}
+              onLocationChange={handleMapLocationChange}
+            />
 
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Navigation size={14} className="text-primary" />
-                  <p>Σύρετε τον δείκτη για να προσαρμόσετε την ακριβή τοποθεσία</p>
-                </div>
-              </Card>
-            </motion.div>
-          )}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Navigation size={14} className="text-primary" />
+              <p>Σύρετε τον δείκτη για να προσαρμόσετε την ακριβή τοποθεσία</p>
+            </div>
+          </Card>
         </div>
 
         <StepNavigation

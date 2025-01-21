@@ -13,7 +13,6 @@ import {
   CheckCircle2,
   Loader2
 } from "lucide-react"
-import { submitProject } from "@/lib/services/projectService"
 import { toast } from "sonner"
 import { StepContainer } from "../shared/StepContainer"
 import { StepNavigation } from "../shared/StepNavigation"
@@ -22,36 +21,9 @@ import { VerificationModal } from '@/components/ui/verification-modal'
 // Get the skip verification flag from environment variables
 const SKIP_VERIFICATION = process.env.NEXT_PUBLIC_SKIP_PHONE_VERIFICATION === 'true'
 
-interface AddressComponents {
-  streetNumber: string;
-  route: string;
-  streetAddress: string;
-  subpremise: string;
-  locality: string;
-  sublocality: string;
-  administrativeAreaLevel1: string;
-  administrativeAreaLevel2: string;
-  administrativeAreaLevel3: string;
-  country: string;
-  countryCode: string;
-  postalCode: string;
-  formattedAddress: string;
-}
-
-interface AddressData {
-  geometry?: {
-    coordinates?: {
-      lat: number;
-      lng: number;
-    };
-  };
-  parsedAddress?: AddressComponents;
-}
-
 interface ConfirmationStepProps {
   selectedCategory: string;
   address: string;
-  selectedAddressData: AddressData | null;
   additionalInfo: string;
   contactDetails: {
     fullName: string;
@@ -71,7 +43,6 @@ interface ConfirmationStepProps {
 export const ConfirmationStep = ({
   selectedCategory,
   address,
-  selectedAddressData,
   additionalInfo,
   contactDetails,
   onConfirm,
@@ -80,7 +51,6 @@ export const ConfirmationStep = ({
   categories
 }: ConfirmationStepProps) => {
   const [isVerifying, setIsVerifying] = useState(false)
-  const [isVerified, setIsVerified] = useState(false)
   const [showVerificationModal, setShowVerificationModal] = useState(false)
   const selectedCategoryData = categories.find(cat => cat.title === selectedCategory)
 
@@ -94,7 +64,6 @@ export const ConfirmationStep = ({
   }
 
   const handleVerificationSuccess = () => {
-    setIsVerified(true)
     setShowVerificationModal(false)
     onConfirm()
   }
