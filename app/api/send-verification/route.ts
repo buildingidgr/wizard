@@ -30,15 +30,25 @@ export async function POST(request: Request) {
 
     const { phoneNumber } = await request.json();
 
+    // Ensure phone number is in E.164 format
+    let formattedNumber = phoneNumber;
+    if (!phoneNumber.startsWith('+')) {
+      formattedNumber = '+' + phoneNumber.replace(/\D/g, '');
+    }
+
+    console.log('Sending verification to:', formattedNumber);
+
     // Send verification code using Verify API
     const verification = await client.verify.v2
       .services(verifyServiceSid)
       .verifications
       .create({
-        to: phoneNumber,
+        to: formattedNumber,
         channel: 'sms',
         locale: 'el' // Greek language
       });
+
+    console.log('Verification status:', verification.status);
 
     return NextResponse.json({ 
       success: true, 
@@ -46,12 +56,17 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     const error = err as TwilioError;
-    console.error('Error sending verification:', error);
+    console.error('Error sending verification:', {
+      message: error.message,
+      code: error.code,
+      status: error.status
+    });
     return NextResponse.json(
       { 
         success: false, 
         error: error.message || 'Failed to send verification code',
-        code: error.code
+        code: error.code,
+        details: 'Check server logs for more information'
       },
       { status: error.status || 500 }
     );

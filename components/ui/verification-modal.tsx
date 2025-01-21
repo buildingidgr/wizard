@@ -43,6 +43,8 @@ export function VerificationModal({
   // Start countdown when modal opens
   useEffect(() => {
     if (isOpen) {
+      // Send initial verification code when modal opens
+      handleResendCode()
       setCountdown(60) // Start 1-minute countdown when modal opens
     } else {
       // Reset states when modal closes
@@ -72,7 +74,7 @@ export function VerificationModal({
     setError('')
 
     try {
-      const response = await fetch('/api/verify/check', {
+      const response = await fetch('/api/verify-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumber, code: verificationCode })
@@ -110,14 +112,15 @@ export function VerificationModal({
     setError('')
 
     try {
-      const response = await fetch('/api/verify/send', {
+      const response = await fetch('/api/send-verification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumber })
       })
 
       if (!response.ok) {
-        throw new Error('Failed to send verification code')
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to send verification code')
       }
 
       setResendCount(prev => prev + 1)
@@ -126,7 +129,8 @@ export function VerificationModal({
       setWrongAttempts(0)
       setVerificationCode('')
       toast.success('Νέος κωδικός εστάλη επιτυχώς')
-    } catch {
+    } catch (error) {
+      console.error('Error sending verification:', error)
       setError('Σφάλμα κατά την αποστολή νέου κωδικού')
     } finally {
       setIsResending(false)
