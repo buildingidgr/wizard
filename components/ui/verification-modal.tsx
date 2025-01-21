@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react'
+"use client"
+
+import { useState, useEffect, useCallback } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -31,12 +33,11 @@ export function VerificationModal({
   onTooManyAttempts
 }: VerificationModalProps) {
   const [verificationCode, setVerificationCode] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
   const [isResending, setIsResending] = useState(false)
   const [resendCount, setResendCount] = useState(0)
   const [countdown, setCountdown] = useState(0)
   const [wrongAttempts, setWrongAttempts] = useState(0)
+  const [error, setError] = useState('')
   const MAX_WRONG_ATTEMPTS = 5
 
   // Start countdown when modal opens
@@ -65,10 +66,9 @@ export function VerificationModal({
     }
   }, [countdown])
 
-  const handleVerifyCode = async () => {
+  const handleVerifyCode = useCallback(async () => {
     if (verificationCode.length !== 6) return
     
-    setIsLoading(true)
     setError('')
 
     try {
@@ -95,12 +95,10 @@ export function VerificationModal({
           setVerificationCode('')
         }
       }
-    } catch (error) {
+    } catch {
       setError('Σφάλμα κατά την επαλήθευση του κωδικού')
-    } finally {
-      setIsLoading(false)
     }
-  }
+  }, [verificationCode, phoneNumber, wrongAttempts, onVerificationComplete, onClose, onTooManyAttempts, MAX_WRONG_ATTEMPTS])
 
   const handleResendCode = async () => {
     if (resendCount >= 3) {
@@ -128,7 +126,7 @@ export function VerificationModal({
       setWrongAttempts(0)
       setVerificationCode('')
       toast.success('Νέος κωδικός εστάλη επιτυχώς')
-    } catch (error) {
+    } catch {
       setError('Σφάλμα κατά την αποστολή νέου κωδικού')
     } finally {
       setIsResending(false)
@@ -146,7 +144,7 @@ export function VerificationModal({
     if (verificationCode.length === 6) {
       handleVerifyCode()
     }
-  }, [verificationCode])
+  }, [verificationCode, handleVerifyCode])
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

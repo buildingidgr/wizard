@@ -1,17 +1,77 @@
 "use client"
 
-import { useState, useRef, useEffect } from 'react'
-import { ChevronDown, ArrowLeft, Check } from 'lucide-react'
+import { useState, useRef, useEffect, ChangeEvent } from 'react'
+import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { DrawerSelect, DrawerSelectItem } from "@/components/ui/drawer-select"
+import { DrawerSelect, DrawerSelectItem, DrawerSelectItemProps } from "@/components/ui/drawer-select"
 import { AddressAutocomplete } from "@/components/AddressAutocomplete"
+import { AddressComponents, ExtendedPlaceResult } from "@/types/address"
+
+interface Category {
+  title: string
+  imageSrc: string
+}
+
+interface ContactDetails {
+  fullName: string
+  email: string
+  phone: string
+  countryCode: string
+}
+
+interface ProgressStepsProps {
+  currentStep: number
+}
+
+interface IntroStepProps {
+  onContinue: () => void
+}
+
+interface CategoryStepProps {
+  selectedCategory: string
+  onCategorySelect: (category: string) => void
+  onContinue: () => void
+  onBack: () => void
+  categories: Category[]
+}
+
+interface LocationStepProps {
+  address: string
+  selectedAddressData: ExtendedPlaceResult | null
+  onAddressChange: (address: string, placeData?: ExtendedPlaceResult) => void
+  onContinue: () => void
+  onBack: () => void
+}
+
+interface ProjectInfoStepProps {
+  additionalInfo: string
+  onInfoChange: (info: string) => void
+  onContinue: () => void
+  onBack: () => void
+}
+
+interface ContactStepProps {
+  contactDetails: ContactDetails
+  onContactDetailsChange: (details: ContactDetails) => void
+  onContinue: () => void
+  onBack: () => void
+}
+
+interface ConfirmationStepProps {
+  selectedCategory: string
+  address: string
+  additionalInfo: string
+  contactDetails: ContactDetails
+  onConfirm: () => void
+  onBack: () => void
+}
 
 // Shared ProgressSteps component
-const ProgressSteps = ({ currentStep }) => (
+const ProgressSteps = ({ currentStep }: ProgressStepsProps) => (
   <div className="flex justify-center space-x-2 mb-8">
     {[0, 1, 2, 3, 4].map((step) => (
       <div
@@ -25,7 +85,7 @@ const ProgressSteps = ({ currentStep }) => (
 )
 
 // IntroStep Component
-export const IntroStep = ({ onContinue }) => (
+export const IntroStep = ({ onContinue }: IntroStepProps) => (
   <div className="flex items-center justify-center p-6">
     <Card className="w-full max-w-md space-y-6 p-6">
       <div className="space-y-2 text-center">
@@ -56,7 +116,7 @@ export const CategoryStep = ({
   onContinue, 
   onBack,
   categories 
-}) => (
+}: CategoryStepProps) => (
   <div className="flex flex-col items-center justify-center p-6">
     <div className="w-full max-w-md space-y-6">
       <ProgressSteps currentStep={0} />
@@ -74,15 +134,18 @@ export const CategoryStep = ({
           value={selectedCategory} 
           placeholder="Επιλέξτε κατηγορία"
         >
-          {categories.map((category, index) => (
-            <DrawerSelectItem 
-              key={index} 
-              value={category.title} 
-              imageSrc={category.imageSrc}
-            >
-              {category.title}
-            </DrawerSelectItem>
-          ))}
+          {categories.map((category, index) => {
+            const { title, imageSrc, ...rest } = category;
+            return (
+              <DrawerSelectItem 
+                key={index} 
+                value={title}
+                {...rest}
+              >
+                {title}
+              </DrawerSelectItem>
+            );
+          })}
         </DrawerSelect>
         <Button 
           onClick={onContinue}
@@ -112,7 +175,7 @@ export const LocationStep = ({
   onAddressChange,
   onContinue,
   onBack
-}) => {
+}: LocationStepProps) => {
   const mapRef = useRef(null)
   const markerRef = useRef(null)
   const mapContainerRef = useRef(null)
@@ -178,7 +241,7 @@ export const ProjectInfoStep = ({
   onInfoChange,
   onContinue,
   onBack
-}) => {
+}: ProjectInfoStepProps) => {
   const [localInfo, setLocalInfo] = useState(additionalInfo)
 
   const handleSubmit = () => {
@@ -237,7 +300,7 @@ export const ContactStep = ({
   onContactDetailsChange,
   onContinue,
   onBack
-}) => {
+}: ContactStepProps) => {
   const [localContactDetails, setLocalContactDetails] = useState({
     fullName: contactDetails.fullName,
     email: contactDetails.email,
@@ -245,10 +308,9 @@ export const ContactStep = ({
     countryCode: '+30'
   })
 
-  const handleInputChange = (field) => (e) => {
+  const handleInputChange = (field: keyof ContactDetails) => (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     if (field === 'phone' && !/^\d*$/.test(value)) return
-    
     setLocalContactDetails(prev => ({
       ...prev,
       [field]: value
@@ -342,7 +404,7 @@ export const ConfirmationStep = ({
   contactDetails,
   onConfirm,
   onBack
-}) => (
+}: ConfirmationStepProps) => (
   <div className="flex flex-col items-center justify-center p-6">
     <div className="w-full max-w-md space-y-6">
       <ProgressSteps currentStep={4} />
