@@ -11,6 +11,7 @@ import { SuccessStep } from '@/components/wizard/steps/SuccessStep'
 import { GoogleMapsProvider } from '@/components/providers/GoogleMapsProvider'
 import { WizardSummary } from '@/components/wizard/WizardSummary'
 import { WizardBranding } from '@/components/wizard/WizardBranding'
+import { cn } from '@/lib/utils'
 
 interface AddressComponents {
   streetNumber: string;
@@ -198,25 +199,32 @@ export default function ProjectWizard() {
         <div className="container mx-auto px-4 py-8 lg:py-12">
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             {/* Branding on the left */}
-            <div className="lg:col-span-3 lg:sticky lg:top-8 bg-card rounded-lg p-6 border">
+            <div className="lg:col-span-2 lg:sticky lg:top-8 bg-card rounded-lg p-6">
               <WizardBranding />
             </div>
             
             {/* Main wizard content in the middle */}
-            <div className="lg:col-span-6 bg-card rounded-lg p-6 border">
+            <div className={cn(
+              "lg:sticky lg:top-8 bg-card rounded-lg p-6",
+              selectedCategory || address || additionalInfo || contactDetails.fullName
+                ? "lg:col-span-6"
+                : "lg:col-span-10"
+            )}>
               {renderStep()}
             </div>
             
             {/* Progress summary on the right */}
-            <div className="lg:col-span-3 lg:sticky lg:top-8 bg-card rounded-lg p-6 border">
-              <WizardSummary
-                currentStep={currentStep}
-                selectedCategory={selectedCategory}
-                address={address}
-                additionalInfo={additionalInfo}
-                contactDetails={contactDetails}
-              />
-            </div>
+            {(selectedCategory || address || additionalInfo || contactDetails.fullName) && (
+              <div className="lg:col-span-4 lg:sticky lg:top-8 bg-card rounded-lg p-6">
+                <WizardSummary
+                  currentStep={currentStep}
+                  selectedCategory={selectedCategory}
+                  address={address}
+                  additionalInfo={additionalInfo}
+                  contactDetails={contactDetails}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -40,7 +40,7 @@ export const IntroContent = () => (
     </div>
 
     <div className="grid gap-6">
-      <Card className="p-6 hover:shadow-lg transition-shadow">
+      <Card className="p-6 hover:shadow-lg transition-shadow border-none">
         <h2 className="text-xl font-semibold mb-4">Πώς λειτουργεί</h2>
         <div className="space-y-2">
           <p>
