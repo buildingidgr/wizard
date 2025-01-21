@@ -134,18 +134,14 @@ export const CategoryStep = ({
           value={selectedCategory} 
           placeholder="Επιλέξτε κατηγορία"
         >
-          {categories.map((category, index) => {
-            const { title, imageSrc, ...rest } = category;
-            return (
-              <DrawerSelectItem 
-                key={index} 
-                value={title}
-                {...rest}
-              >
-                {title}
-              </DrawerSelectItem>
-            );
-          })}
+          {categories.map((category, index) => (
+            <DrawerSelectItem 
+              key={index} 
+              value={category.title}
+            >
+              {category.title}
+            </DrawerSelectItem>
+          ))}
         </DrawerSelect>
         <Button 
           onClick={onContinue}
@@ -176,11 +172,7 @@ export const LocationStep = ({
   onContinue,
   onBack
 }: LocationStepProps) => {
-  const mapRef = useRef(null)
-  const markerRef = useRef(null)
   const mapContainerRef = useRef(null)
-  const [localAddress, setLocalAddress] = useState(address)
-  const [mapLoaded, setMapLoaded] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   return (
@@ -198,7 +190,7 @@ export const LocationStep = ({
           </div>
           <div className="space-y-4">
             <AddressAutocomplete
-              value={localAddress}
+              value={address}
               onChange={onAddressChange}
               className="w-full"
             />

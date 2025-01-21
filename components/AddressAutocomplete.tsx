@@ -165,7 +165,7 @@ export function AddressAutocomplete({ value, onChange, className }: AddressAutoc
         isInitializedRef.current = false
       }
     }
-  }, [isLoaded]) // Only depend on isLoaded
+  }, [isLoaded, onChange, parseAddressComponents])
 
   // Sync input value with prop value when not selecting
   useEffect(() => {

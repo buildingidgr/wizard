@@ -8,8 +8,6 @@ import PhoneNumberInput, { Props, DefaultInputComponentProps } from 'react-phone
 import { isPossiblePhoneNumber, validatePhoneNumberLength } from 'libphonenumber-js'
 import flags from "react-phone-number-input/flags"
 
-type PhoneInputComponent = React.ForwardRefExoticComponent<Props<DefaultInputComponentProps>>
-
 interface CustomPhoneInputProps extends Omit<Props<typeof PhoneNumberInput>, 'onChange'> {
   onChange: (value: string, isValid: boolean, error?: string) => void
   className?: string
@@ -46,13 +44,12 @@ const PhoneInput = forwardRef<HTMLInputElement, CustomPhoneInputProps>(
       onChange(formattedValue, isValid, error)
     }
 
-    // TODO: The 'any' type is used here because the PhoneNumberInput component's ref type
-    // is complex and doesn't match well with HTMLInputElement. We've tried several approaches
-    // to type it correctly but none worked well. This should be revisited when the library
-    // provides better TypeScript support.
+    // TODO: The ref type is complex and doesn't match well with HTMLInputElement.
+    // We've tried several approaches to type it correctly but none worked well.
+    // This should be revisited when the library provides better TypeScript support.
     return (
       <PhoneNumberInput
-        ref={ref as any}
+        ref={ref as React.Ref<any>}
         className={cn("flex rounded-lg", className)}
         international
         flagComponent={FlagComponent}
