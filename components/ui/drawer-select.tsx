@@ -4,6 +4,7 @@ import * as React from "react"
 import { Drawer, DrawerContent, DrawerTrigger, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 interface DrawerSelectContextValue {
   value?: string
@@ -24,6 +25,7 @@ export interface DrawerSelectProps extends React.HTMLAttributes<HTMLDivElement> 
 export interface DrawerSelectItemProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string
   children?: React.ReactNode
+  imageSrc?: string
 }
 
 export const DrawerSelect = React.forwardRef<HTMLDivElement, DrawerSelectProps>(
@@ -65,7 +67,7 @@ export const DrawerSelect = React.forwardRef<HTMLDivElement, DrawerSelectProps>(
 DrawerSelect.displayName = "DrawerSelect"
 
 export const DrawerSelectItem = React.forwardRef<HTMLDivElement, DrawerSelectItemProps>(
-  ({ value, className, children, ...props }, ref) => {
+  ({ value, className, children, imageSrc, ...props }, ref) => {
     const context = React.useContext(DrawerSelectContext)
     if (!context) {
       throw new Error("DrawerSelectItem must be used within DrawerSelect")
@@ -79,10 +81,25 @@ export const DrawerSelectItem = React.forwardRef<HTMLDivElement, DrawerSelectIte
           context.onValueChange?.(value)
           context.setOpen(false)
         }}
-        className={cn("cursor-pointer", className)}
+        className={cn(
+          "cursor-pointer relative overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground",
+          className
+        )}
         {...props}
       >
-        {children}
+        {imageSrc && (
+          <div className="relative aspect-[4/3] w-full">
+            <Image
+              src={imageSrc}
+              alt={value}
+              fill
+              className="object-cover"
+            />
+          </div>
+        )}
+        <div className="p-4">
+          {children}
+        </div>
       </div>
     )
   }
