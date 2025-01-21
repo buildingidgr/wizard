@@ -16,6 +16,11 @@ const client = twilio(accountSid, authToken)
 // Ensure verifyServiceSid is a string
 const VERIFY_SERVICE_SID: string = verifyServiceSid
 
+interface TwilioError extends Error {
+  code?: string;
+  status?: number;
+}
+
 export async function POST(request: Request) {
   try {
     const { phoneNumber, code } = await request.json()
@@ -50,7 +55,8 @@ export async function POST(request: Request) {
       valid: verificationCheck.valid,
       sid: verificationCheck.sid
     })
-  } catch (error: any) {
+  } catch (err) {
+    const error = err as TwilioError
     console.error('Error checking verification:', error)
     return NextResponse.json(
       { 

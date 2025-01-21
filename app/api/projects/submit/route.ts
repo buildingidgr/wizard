@@ -33,7 +33,40 @@ interface ProjectData {
   }
 }
 
-function validateProjectData(data: any): data is ProjectData {
+interface UnknownProjectData {
+  project?: {
+    category?: {
+      title?: unknown
+      description?: unknown
+    }
+    location?: {
+      address?: unknown
+      coordinates?: {
+        lat?: unknown
+        lng?: unknown
+      }
+    }
+    details?: {
+      description?: unknown
+    }
+  }
+  contact?: {
+    fullName?: unknown
+    email?: unknown
+    phone?: {
+      countryCode?: unknown
+      number?: unknown
+    }
+  }
+  metadata?: {
+    submittedAt?: unknown
+    locale?: unknown
+    source?: unknown
+    version?: unknown
+  }
+}
+
+function validateProjectData(data: UnknownProjectData): data is ProjectData {
   try {
     // Validate project
     if (!data.project) return false;
@@ -59,14 +92,15 @@ function validateProjectData(data: any): data is ProjectData {
     if (typeof data.metadata.version !== 'string') return false;
 
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const projectData = await request.json()
+    const rawData: unknown = await request.json()
+    const projectData = rawData as UnknownProjectData
 
     // Validate the data structure
     if (!validateProjectData(projectData)) {
@@ -95,11 +129,11 @@ export async function POST(request: Request) {
         submittedAt: new Date().toISOString()
       }
     })
-  } catch (error: any) {
-    console.error('Error submitting project:', error)
+  } catch (err) {
+    console.error('Error submitting project:', err)
     
     // Handle different types of errors
-    if (error instanceof SyntaxError) {
+    if (err instanceof SyntaxError) {
       return NextResponse.json(
         { 
           success: false,
@@ -109,6 +143,7 @@ export async function POST(request: Request) {
       )
     }
 
+    const error = err as Error
     return NextResponse.json(
       { 
         success: false,
