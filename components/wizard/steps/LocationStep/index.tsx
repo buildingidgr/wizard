@@ -47,31 +47,16 @@ export const LocationStep = ({
 }: LocationStepProps) => {
   const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral | null>(() => {
     if (selectedAddressData?.geometry?.location) {
-      return {
-        lat: selectedAddressData.geometry.location.lat(),
-        lng: selectedAddressData.geometry.location.lng()
-      }
+      return selectedAddressData.geometry.location.toJSON()
     }
     return null
   })
 
   const handleAddressSelect = (value: string, placeData?: ExtendedPlaceResult) => {
     if (placeData?.geometry?.location) {
-      const coordinates = {
-        lat: placeData.geometry.location.lat(),
-        lng: placeData.geometry.location.lng()
-      }
-      
-      const modifiedPlaceData = {
-        ...placeData,
-        geometry: {
-          ...placeData.geometry,
-          coordinates
-        }
-      }
-      
+      const coordinates = placeData.geometry.location.toJSON()
       setMapCenter(coordinates)
-      onAddressChange(value, modifiedPlaceData)
+      onAddressChange(value, placeData)
     } else {
       onAddressChange(value, placeData)
     }
@@ -85,15 +70,10 @@ export const LocationStep = ({
       
       if (result.results[0]) {
         const placeData = result.results[0]
-        const coordinates = location
         const parsedAddress = parseAddressComponents(placeData.address_components, placeData.formatted_address)
         
-        const modifiedPlaceData = {
+        const modifiedPlaceData: ExtendedPlaceResult = {
           ...placeData,
-          geometry: {
-            ...placeData.geometry,
-            coordinates
-          },
           parsedAddress
         }
         

@@ -11,6 +11,26 @@ import { SuccessStep } from '@/components/wizard/steps/SuccessStep'
 import { GoogleMapsProvider } from '@/components/providers/GoogleMapsProvider'
 import { WizardSummary } from '@/components/wizard/WizardSummary'
 
+interface AddressComponents {
+  streetNumber: string;
+  route: string;
+  streetAddress: string;
+  subpremise: string;
+  locality: string;
+  sublocality: string;
+  administrativeAreaLevel1: string;
+  administrativeAreaLevel2: string;
+  administrativeAreaLevel3: string;
+  country: string;
+  countryCode: string;
+  postalCode: string;
+  formattedAddress: string;
+}
+
+type ExtendedPlaceResult = google.maps.places.PlaceResult & {
+  parsedAddress?: AddressComponents;
+};
+
 const categories = [
   {
     title: "Αρχιτεκτονικός Σχεδιασμός",
@@ -54,28 +74,11 @@ const categories = [
   }
 ]
 
-interface GooglePlaceGeometry {
-  location: {
-    lat: () => number;
-    lng: () => number;
-  };
-}
-
-interface GooglePlaceData {
-  geometry?: GooglePlaceGeometry;
-  formatted_address?: string;
-  address_components?: Array<{
-    long_name: string;
-    short_name: string;
-    types: string[];
-  }>;
-}
-
 export default function ProjectWizard() {
   const [currentStep, setCurrentStep] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState('')
   const [address, setAddress] = useState('')
-  const [selectedAddressData, setSelectedAddressData] = useState<GooglePlaceData | null>(null)
+  const [selectedAddressData, setSelectedAddressData] = useState<ExtendedPlaceResult | null>(null)
   const [additionalInfo, setAdditionalInfo] = useState('')
   const [contactDetails, setContactDetails] = useState({
     fullName: '',
@@ -96,16 +99,9 @@ export default function ProjectWizard() {
     setSelectedCategory(category)
   }
 
-  const handleAddressChange = (value: string, placeData?: GooglePlaceData) => {
-    console.log('Address change in ProjectWizard:', { value, placeData });
-    if (placeData?.geometry?.location) {
-      console.log('Location data:', {
-        lat: placeData.geometry.location.lat(),
-        lng: placeData.geometry.location.lng()
-      });
-    }
-    setAddress(value);
-    setSelectedAddressData(placeData || null);
+  const handleAddressChange = (value: string, placeData?: ExtendedPlaceResult) => {
+    setAddress(value)
+    setSelectedAddressData(placeData || null)
   }
 
   const handleInfoChange = (info: string) => {
@@ -117,7 +113,6 @@ export default function ProjectWizard() {
   }
 
   const handleReset = () => {
-    // Reset all form data
     setSelectedCategory('')
     setAddress('')
     setSelectedAddressData(null)
@@ -158,7 +153,7 @@ export default function ProjectWizard() {
       case 3:
         return (
           <ProjectInfoStep
-            info={additionalInfo}
+            additionalInfo={additionalInfo}
             onInfoChange={handleInfoChange}
             onContinue={handleContinue}
             onBack={handleBack}
@@ -174,12 +169,10 @@ export default function ProjectWizard() {
           />
         )
       case 5:
-        console.log('Rendering ConfirmationStep with selectedAddressData:', selectedAddressData);
         return (
           <ConfirmationStep
             selectedCategory={selectedCategory}
             address={address}
-            selectedAddressData={selectedAddressData}
             additionalInfo={additionalInfo}
             contactDetails={contactDetails}
             onConfirm={handleContinue}
