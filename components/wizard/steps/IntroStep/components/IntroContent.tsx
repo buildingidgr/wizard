@@ -9,6 +9,7 @@ import {
   MessageCircle
 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
+import { PolicyDrawer } from "@/components/shared/PolicyDrawer"
 
 interface IntroFooterProps {
   onAgreementChange: (agreed: boolean) => void
@@ -24,7 +25,7 @@ export const IntroFooter = ({ onAgreementChange }: IntroFooterProps) => (
       htmlFor="terms"
       className="text-sm text-muted-foreground leading-relaxed"
     >
-      Διάβασα και αποδέχομαι τους <a href="/terms" target="_blank" className="text-primary hover:underline">Όρους Χρήσης</a> και την <a href="/privacy" target="_blank" className="text-primary hover:underline">Πολιτική Απορρήτου</a>. Συναινώ στην επεξεργασία των προσωπικών μου δεδομένων σύμφωνα με τον <a href="/gdpr" target="_blank" className="text-primary hover:underline">Γενικό Κανονισμό Προστασίας Δεδομένων (GDPR)</a>.
+      Διάβασα και αποδέχομαι την <PolicyDrawer type="privacy" /> και συναινώ στην επεξεργασία των προσωπικών μου δεδομένων σύμφωνα με τον <PolicyDrawer type="gdpr" />.
     </label>
   </div>
 )
