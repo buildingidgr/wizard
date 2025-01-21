@@ -31,7 +31,7 @@ export const IntroFooter = ({ onAgreementChange }: IntroFooterProps) => (
 )
 
 export const IntroContent = () => (
-  <div className="max-w-3xl mx-auto space-y-8 px-4">
+  <div className="max-w-4xl mx-auto space-y-8 px-4">
     <div className="text-center space-y-3">
       <h1 className="text-4xl font-bold tracking-tight">Καταχώρηση έργου</h1>
       <p className="text-lg text-muted-foreground">

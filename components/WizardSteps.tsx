@@ -86,7 +86,7 @@ const ProgressSteps = ({ currentStep }: ProgressStepsProps) => (
 // IntroStep Component
 export const IntroStep = ({ onContinue }: IntroStepProps) => (
   <div className="flex items-center justify-center p-6">
-    <Card className="w-full max-w-md space-y-6 p-6">
+    <div className="w-full max-w-2xl space-y-6">
       <div className="space-y-2 text-center">
         <h1 className="text-3xl font-bold">Καταχώρηση έργου</h1>
       </div>
@@ -104,7 +104,7 @@ export const IntroStep = ({ onContinue }: IntroStepProps) => (
         </a>
         .
       </p>
-    </Card>
+    </div>
   </div>
 )
 
@@ -117,7 +117,7 @@ export const CategoryStep = ({
   categories 
 }: CategoryStepProps) => (
   <div className="flex flex-col items-center justify-center p-6">
-    <div className="w-full max-w-md space-y-6">
+    <div className="w-full max-w-2xl space-y-6">
       <ProgressSteps currentStep={0} />
       <div className="space-y-6">
         <div className="space-y-2 text-center">
@@ -175,7 +175,7 @@ export const LocationStep = ({
 
   return (
     <div className="flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-2xl space-y-6">
         <ProgressSteps currentStep={1} />
         <div className="space-y-6">
           <div className="space-y-2 text-center">
@@ -239,7 +239,7 @@ export const ProjectInfoStep = ({
 
   return (
     <div className="flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-2xl space-y-6">
         <ProgressSteps currentStep={2} />
         <div className="space-y-6">
           <div className="space-y-2 text-center">
@@ -312,7 +312,7 @@ export const ContactStep = ({
 
   return (
     <div className="flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-2xl space-y-6">
         <ProgressSteps currentStep={3} />
         <div className="space-y-6">
           <div className="space-y-2 text-center">
@@ -394,7 +394,7 @@ export const ConfirmationStep = ({
   onBack
 }: ConfirmationStepProps) => (
   <div className="flex flex-col items-center justify-center p-6">
-    <div className="w-full max-w-md space-y-6">
+    <div className="w-full max-w-2xl space-y-6">
       <ProgressSteps currentStep={4} />
       <div className="space-y-6">
         <div className="space-y-2 text-center">
@@ -406,7 +406,7 @@ export const ConfirmationStep = ({
           </h1>
         </div>
 
-        <Card className="p-4 space-y-4">
+        <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm space-y-4">
           <div className="space-y-2">
             <h3 className="font-medium">Κατηγορία</h3>
             <p className="text-sm text-muted-foreground">{selectedCategory}</p>
@@ -427,7 +427,7 @@ export const ConfirmationStep = ({
               <p>{contactDetails.phone}</p>
             </div>
           </div>
-        </Card>
+        </div>
 
         <div className="flex gap-4">
           <Button 
