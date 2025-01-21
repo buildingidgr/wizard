@@ -10,6 +10,7 @@ import { ConfirmationStep } from '@/components/wizard/steps/ConfirmationStep'
 import { SuccessStep } from '@/components/wizard/steps/SuccessStep'
 import { GoogleMapsProvider } from '@/components/providers/GoogleMapsProvider'
 import { WizardSummary } from '@/components/wizard/WizardSummary'
+import { WizardBranding } from '@/components/wizard/WizardBranding'
 
 interface AddressComponents {
   streetNumber: string;
@@ -32,15 +33,18 @@ type ExtendedPlaceResult = google.maps.places.PlaceResult & {
 };
 
 const categories = [
+
   {
-    title: "Αρχιτεκτονικός Σχεδιασμός",
-    description: "Αρχιτεκτονικές μελέτες, σχεδιασμός εσωτερικών χώρων, φωτορεαλιστικές απεικονίσεις, διαμόρφωση κήπων και εξωτερικών χώρων",
-    imageSrc: "/architecture.png"
+    id: "construction",
+    title: "Κατασκευές",
+    description: "Ανακαινίσεις, επισκευές, νέες κατασκευές",
+    imageSrc: "/construction.png"
   },
   {
-    title: "Στατικές & Κατασκευαστικές Μελέτες",
-    description: "Στατικές μελέτες, άδειες δόμησης, επιβλέψεις κατασκευών, ανακαινίσεις και κτιριακές παρεμβάσεις",
-    imageSrc: "/construction.png"
+    id: "architecture",
+    title: "Αρχιτεκτονική",
+    description: "Αρχιτεκτονικές μελέτες και σχεδιασμός",
+    imageSrc: "/architecture.png"
   },
   {
     title: "Τεχνικοί Έλεγχοι & Νομιμοποιήσεις",
@@ -190,19 +194,29 @@ export default function ProjectWizard() {
 
   return (
     <GoogleMapsProvider>
-      <div className="grid min-h-screen md:grid-cols-2">
-        <div className="relative hidden bg-[#0B0B0A] p-10 text-white md:flex">
-          <WizardSummary
-            currentStep={currentStep}
-            selectedCategory={selectedCategory}
-            address={address}
-            additionalInfo={additionalInfo}
-            contactDetails={contactDetails}
-          />
-        </div>
-        <div className="relative flex items-center justify-center">
-          <div className="w-full px-4 sm:px-6 md:px-8">
-            {renderStep()}
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8 lg:py-12">
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
+            {/* Branding on the left */}
+            <div className="lg:col-span-3 lg:sticky lg:top-8 bg-card rounded-lg p-6 border">
+              <WizardBranding />
+            </div>
+            
+            {/* Main wizard content in the middle */}
+            <div className="lg:col-span-6 bg-card rounded-lg p-6 border">
+              {renderStep()}
+            </div>
+            
+            {/* Progress summary on the right */}
+            <div className="lg:col-span-3 lg:sticky lg:top-8 bg-card rounded-lg p-6 border">
+              <WizardSummary
+                currentStep={currentStep}
+                selectedCategory={selectedCategory}
+                address={address}
+                additionalInfo={additionalInfo}
+                contactDetails={contactDetails}
+              />
+            </div>
           </div>
         </div>
       </div>

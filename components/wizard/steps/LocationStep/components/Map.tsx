@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState, useEffect } from 'react'
-import { Maximize2, Minimize2 } from 'lucide-react'
+import { Maximize2, Minimize2, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -169,14 +169,10 @@ export const Map = ({ selectedLocation, onLocationChange }: MapProps) => {
     >
       <div ref={mapDivRef} className="w-full h-full" />
       <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          "absolute top-3 right-3 bg-white/90 hover:bg-white shadow-sm",
-          "transition-all duration-300",
-          "hover:shadow-md hover:scale-105"
-        )}
+        variant="secondary"
+        size="sm"
         onClick={toggleFullscreen}
+        className="absolute top-3 right-3 shadow-sm"
       >
         {isFullscreen ? (
           <Minimize2 className="h-4 w-4" />

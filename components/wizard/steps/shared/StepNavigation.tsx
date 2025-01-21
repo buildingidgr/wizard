@@ -6,37 +6,35 @@ import { ArrowLeft } from "lucide-react"
 
 interface StepNavigationProps {
   onContinue: () => void
-  onBack?: () => void
-  continueText?: string
-  backText?: string
+  onBack: () => void
   disabled?: boolean
+  continueText?: string
+  loading?: boolean
 }
 
-export const StepNavigation = ({ 
-  onContinue, 
-  onBack, 
-  continueText = "Επιβεβαίωση",
-  backText = "Επιστροφή",
-  disabled = false
-}: StepNavigationProps) => (
-  <div className="flex gap-4">
-    <Button 
-      onClick={onContinue}
-      disabled={disabled}
-      className="w-full"
-      size="lg"
-    >
-      {continueText}
-    </Button>
-    {onBack && (
-      <Button 
-        variant="outline"
+export function StepNavigation({
+  onContinue,
+  onBack,
+  disabled,
+  continueText = "Συνέχεια",
+  loading
+}: StepNavigationProps) {
+  return (
+    <div className="flex items-center justify-between pt-6">
+      <Button
+        variant="ghost"
         onClick={onBack}
-        className="flex items-center justify-center gap-2"
+        className="flex items-center gap-2"
       >
         <ArrowLeft className="h-4 w-4" />
-        {backText}
+        Πίσω
       </Button>
-    )}
-  </div>
-)
+      <Button
+        onClick={onContinue}
+        disabled={disabled}
+      >
+        {loading ? "Παρακαλώ περιμένετε..." : continueText}
+      </Button>
+    </div>
+  )
+}

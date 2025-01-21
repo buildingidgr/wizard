@@ -11,7 +11,7 @@ export function ProgressSteps({ currentStep }: ProgressStepsProps) {
         <div
           key={step}
           className={`h-1 w-16 rounded ${
-            step === currentStep ? "bg-primary" : "bg-gray-200"
+            step === currentStep ? "bg-primary" : "bg-muted"
           }`}
         />
       ))}

@@ -65,7 +65,7 @@ export const IntroContent = () => (
         </h2>
         <div className="grid gap-4">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-white text-primary shrink-0">
+            <div className="p-2 rounded-lg bg-card text-primary shrink-0">
               <Users size={20} />
             </div>
             <p className="text-muted-foreground">
@@ -73,7 +73,7 @@ export const IntroContent = () => (
             </p>
           </div>
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-white text-primary shrink-0">
+            <div className="p-2 rounded-lg bg-card text-primary shrink-0">
               <MessageCircle size={20} />
             </div>
             <p className="text-muted-foreground">
@@ -81,7 +81,7 @@ export const IntroContent = () => (
             </p>
           </div>
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-white text-primary shrink-0">
+            <div className="p-2 rounded-lg bg-card text-primary shrink-0">
               <Calendar size={20} />
             </div>
             <p className="text-muted-foreground">
