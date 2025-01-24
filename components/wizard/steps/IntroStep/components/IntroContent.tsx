@@ -7,7 +7,8 @@ import {
   Users,
   Calendar,
   MessageCircle,
-  CheckCircle
+  CheckCircle2,
+  CircleDot
 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { PolicyDrawer } from "@/components/shared/PolicyDrawer"
@@ -32,27 +33,33 @@ export const IntroFooter = ({ onAgreementChange }: IntroFooterProps) => (
 )
 
 export const IntroContent = () => (
-  <div className="space-y-6">
+  <div className="space-y-4 sm:space-y-6">
     {/* Header */}
-    <div className="text-center space-y-3">
-      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+    <div className="text-center space-y-2 sm:space-y-3 pb-2">
+      <h1 className="text-xl sm:text-3xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
         Καταχώρηση έργου
       </h1>
-      <p className="text-base text-muted-foreground max-w-lg mx-auto">
+      <p className="text-sm sm:text-base text-muted-foreground max-w-lg mx-auto px-4 sm:px-0">
         Συμπληρώστε τη φόρμα για να συνδεθείτε με εξειδικευμένους μηχανικούς
       </p>
     </div>
 
     {/* Steps */}
-    <Card className="p-4 sm:p-6 hover:shadow-lg transition-shadow border-none">
-      <h2 className="text-lg font-semibold mb-4">Πώς λειτουργεί</h2>
-      <div className="space-y-4">
+    <Card className="p-5 sm:p-6 hover:shadow-lg transition-shadow border-none bg-gradient-to-b from-background to-primary/5">
+      <h2 className="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
+        <span>Πώς λειτουργεί</span>
+        <span className="text-[10px] sm:text-xs text-muted-foreground font-normal">4 απλά βήματα</span>
+      </h2>
+      <div className="space-y-5 sm:space-y-4">
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-            <CheckCircle size={18} />
+            <CircleDot size={18} />
           </div>
           <div>
-            <p className="font-medium mb-1">Επιλέξτε κατηγορία</p>
+            <p className="font-medium mb-1 flex items-center gap-2">
+              Επιλέξτε κατηγορία
+              <span className="text-xs text-muted-foreground font-normal">Βήμα 1</span>
+            </p>
             <p className="text-sm text-muted-foreground">
               Διαλέξτε το είδος της εργασίας που θέλετε να κάνετε
             </p>
@@ -60,10 +67,13 @@ export const IntroContent = () => (
         </div>
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-            <CheckCircle size={18} />
+            <CircleDot size={18} />
           </div>
           <div>
-            <p className="font-medium mb-1">Προσθέστε τοποθεσία</p>
+            <p className="font-medium mb-1 flex items-center gap-2">
+              Προσθέστε τοποθεσία
+              <span className="text-xs text-muted-foreground font-normal">Βήμα 2</span>
+            </p>
             <p className="text-sm text-muted-foreground">
               Υποδείξτε πού βρίσκεται το ακίνητο
             </p>
@@ -71,10 +81,13 @@ export const IntroContent = () => (
         </div>
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-            <CheckCircle size={18} />
+            <CircleDot size={18} />
           </div>
           <div>
-            <p className="font-medium mb-1">Περιγράψτε το έργο</p>
+            <p className="font-medium mb-1 flex items-center gap-2">
+              Περιγράψτε το έργο
+              <span className="text-xs text-muted-foreground font-normal">Βήμα 3</span>
+            </p>
             <p className="text-sm text-muted-foreground">
               Δώστε μας περισσότερες λεπτομέρειες για το έργο σας
             </p>
@@ -82,10 +95,13 @@ export const IntroContent = () => (
         </div>
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-            <CheckCircle size={18} />
+            <CircleDot size={18} />
           </div>
           <div>
-            <p className="font-medium mb-1">Προσθέστε στοιχεία επικοινωνίας</p>
+            <p className="font-medium mb-1 flex items-center gap-2">
+              Προσθέστε στοιχεία επικοινωνίας
+              <span className="text-xs text-muted-foreground font-normal">Βήμα 4</span>
+            </p>
             <p className="text-sm text-muted-foreground">
               Συμπληρώστε τα στοιχεία σας για να επικοινωνήσουν μαζί σας
             </p>
@@ -95,14 +111,14 @@ export const IntroContent = () => (
     </Card>
 
     {/* What happens next */}
-    <Card className="p-4 sm:p-6 bg-primary/5 hover:shadow-lg transition-shadow border-none">
-      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+    <Card className="p-5 sm:p-6 hover:shadow-lg transition-shadow border-none bg-gradient-to-b from-primary/5 to-primary/10">
+      <h2 className="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
         <span>Τι συμβαίνει μετά</span>
         <ArrowRight className="text-primary" size={18} />
       </h2>
-      <div className="space-y-4">
+      <div className="space-y-5 sm:space-y-4">
         <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-card text-primary shrink-0">
+          <div className="p-2 rounded-lg bg-background text-primary shrink-0">
             <Users size={18} />
           </div>
           <div>
@@ -113,7 +129,7 @@ export const IntroContent = () => (
           </div>
         </div>
         <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-card text-primary shrink-0">
+          <div className="p-2 rounded-lg bg-background text-primary shrink-0">
             <MessageCircle size={18} />
           </div>
           <div>
@@ -124,7 +140,7 @@ export const IntroContent = () => (
           </div>
         </div>
         <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-card text-primary shrink-0">
+          <div className="p-2 rounded-lg bg-background text-primary shrink-0">
             <Calendar size={18} />
           </div>
           <div>
@@ -138,7 +154,7 @@ export const IntroContent = () => (
     </Card>
 
     {/* Footer text */}
-    <div className="space-y-2 text-xs text-muted-foreground">
+    <div className="space-y-3 sm:space-y-2 text-[11px] sm:text-xs text-muted-foreground border-t pt-4 px-1 sm:px-0">
       <p>
         Η πλατφόρμα μας λειτουργεί ως μέσο διασύνδεσης μεταξύ ιδιοκτητών ακινήτων και επαγγελματιών μηχανικών. Δεν παρέχουμε τεχνικές υπηρεσίες και δεν φέρουμε ευθύνη για τις υπηρεσίες που παρέχονται από τους μηχανικούς.
       </p>

@@ -29,7 +29,7 @@ export const CategoryGrid = ({
     placeholder="Επιλέξτε κατηγορία"
     title="Επιλέξτε κατηγορία έργου"
   >
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {categories.map((category, index) => (
         <motion.div
           key={index}
@@ -40,15 +40,15 @@ export const CategoryGrid = ({
           <DrawerSelectItem 
             value={category.title}
             className={cn(
-              "group relative flex flex-col gap-3 p-3 rounded-lg border",
+              "group relative flex flex-col gap-2 sm:gap-3 p-3 sm:p-4 rounded-lg border",
               "transition-all duration-200 ease-out",
-              "hover:shadow-md hover:scale-[1.02]",
+              "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]",
               selectedCategory === category.title 
                 ? "border-primary/50 bg-primary/5 hover:bg-primary/10" 
                 : "border-border/40 hover:border-border hover:bg-accent/5"
             )}
           >
-            <div className="relative w-full h-32 rounded-lg overflow-hidden">
+            <div className="relative w-full h-24 sm:h-32 rounded-lg overflow-hidden bg-muted/50">
               <Image
                 src={category.imageSrc}
                 alt={category.title}
@@ -58,25 +58,25 @@ export const CategoryGrid = ({
             </div>
 
             <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1.5 flex-1">
+              <div className="space-y-1 sm:space-y-1.5 flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-medium text-foreground/90 text-sm">
+                  <h3 className="font-medium text-foreground/90 text-base sm:text-sm">
                     {category.title}
                   </h3>
                   <ChevronRight 
-                    size={14} 
+                    size={16} 
                     className={cn(
                       "text-muted-foreground/50 transition-all duration-300",
                       "group-hover:translate-x-0.5 group-hover:text-foreground/70"
                     )} 
                   />
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                <p className="text-sm sm:text-xs text-muted-foreground leading-relaxed line-clamp-2">
                   {category.description}
                 </p>
               </div>
               <div className={cn(
-                "w-4 h-4 rounded-full border flex items-center justify-center shrink-0",
+                "w-5 h-5 sm:w-4 sm:h-4 rounded-full border flex items-center justify-center shrink-0",
                 "transition-all duration-300",
                 selectedCategory === category.title 
                   ? "border-primary bg-primary text-primary-foreground scale-110" 
@@ -88,7 +88,7 @@ export const CategoryGrid = ({
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
                   >
-                    <Check size={10} />
+                    <Check size={12} className="sm:w-[10px] sm:h-[10px]" />
                   </motion.div>
                 )}
               </div>
