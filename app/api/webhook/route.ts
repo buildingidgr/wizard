@@ -20,8 +20,17 @@ interface ProjectData {
         lat: number
         lng: number
       }
+      parsedAddress?: {
+        route: string
+        streetNumber: string
+        locality: string
+        postalCode: string
+        administrativeAreaLevel1: string
+        administrativeAreaLevel2: string
+      }
     }
     details: {
+      title: string
       description: string
     }
   }
@@ -64,6 +73,7 @@ interface TransformedData {
       }
     }
     details: {
+      title: string
       description: string
     }
   }
@@ -72,6 +82,7 @@ interface TransformedData {
     locale: string
     source: string
     version: string
+    administrativeArea: string
   }
 }
 
@@ -83,9 +94,15 @@ function transformProjectData(data: ProjectData): TransformedData {
   // Split full name into first and last name
   const [firstName = '', lastName = ''] = data.contact.fullName.split(' ')
 
-  // Extract address components from the Google Places data
-  const addressComponents = data.project.location.address.split(',').map((s: string) => s.trim())
-  const [street = '', city = ''] = addressComponents
+  // Use the parsed address components if available
+  const addressComponents = data.project.location.parsedAddress || {
+    route: '',
+    streetNumber: '',
+    locality: '',
+    postalCode: '',
+    administrativeAreaLevel1: '',
+    administrativeAreaLevel2: ''
+  }
   
   return {
     contact: {
@@ -100,12 +117,12 @@ function transformProjectData(data: ProjectData): TransformedData {
         }
       ],
       address: {
-        street,
-        city,
-        state: "",
+        street: `${addressComponents.route} ${addressComponents.streetNumber}`.trim(),
+        city: addressComponents.locality,
+        state: addressComponents.administrativeAreaLevel1,
         unit: "",
         country: "GR",
-        postalCode: ""
+        postalCode: addressComponents.postalCode
       }
     },
     project: {
@@ -113,22 +130,35 @@ function transformProjectData(data: ProjectData): TransformedData {
       location: {
         coordinates: data.project.location.coordinates
       },
-      details: data.project.details
+      details: {
+        title: data.project.details.title,
+        description: data.project.details.description
+      }
     },
-    metadata: data.metadata
+    metadata: {
+      ...data.metadata,
+      administrativeArea: addressComponents.administrativeAreaLevel2 // Add prefecture/administrative area
+    }
   }
 }
 
 export async function POST(request: Request) {
   try {
+    console.log('Webhook request received')
     const data = await request.json()
+    
+    console.log('Original data:', JSON.stringify(data, null, 2))
     
     // Transform the data to match the required format
     const transformedData = transformProjectData(data)
     
     console.log('Transformed data:', JSON.stringify(transformedData, null, 2))
+    console.log('Sending request to webhook service...')
 
-    const response = await fetch('https://webhook-service-production-dfad.up.railway.app/webhook/opportunity', {
+    const webhookUrl = 'https://webhook-service-production-dfad.up.railway.app/webhook/opportunity'
+    console.log('Webhook URL:', webhookUrl)
+
+    const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -137,15 +167,30 @@ export async function POST(request: Request) {
     })
 
     const result = await response.json()
+    console.log('Webhook service response:', {
+      status: response.status,
+      statusText: response.statusText,
+      result
+    })
 
     if (!response.ok) {
+      console.error('Webhook service error:', {
+        status: response.status,
+        statusText: response.statusText,
+        result
+      })
       throw new Error(result.message || `HTTP error! status: ${response.status}`)
     }
 
+    console.log('Webhook request completed successfully')
     return NextResponse.json(result)
   } catch (err) {
     const error = err as WebhookError
-    console.error('Webhook proxy error:', error)
+    console.error('Webhook proxy error:', {
+      message: error.message,
+      status: error.status,
+      stack: error.stack
+    })
     return NextResponse.json(
       { 
         success: false, 

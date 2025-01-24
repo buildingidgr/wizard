@@ -111,35 +111,66 @@ export function AddressAutocomplete({ value, onChange, className }: AddressAutoc
       fields: ['address_components', 'formatted_address', 'geometry', 'name', 'place_id']
     })
 
+    // Create a geocoder instance for reverse geocoding
+    const geocoder = new google.maps.Geocoder()
+
     const placeChangedListener = () => {
       if (!autocompleteRef.current) return
 
       const place = autocompleteRef.current.getPlace()
 
       if (place?.geometry) {
-        const parsedAddress = parseAddressComponents(place.address_components, place.formatted_address)
-        const placeWithParsedAddress = {
-          ...place,
-          parsedAddress
-        }
-        setInputValue(place.formatted_address || '')
-        setInternalValue(place.formatted_address || '')
-        onChange(place.formatted_address || '', placeWithParsedAddress)
+        // Get Greek formatted address using geocoder
+        geocoder.geocode(
+          { 
+            location: place.geometry.location,
+            language: 'el'
+          },
+          (results, status) => {
+            if (status === google.maps.GeocoderStatus.OK && results?.[0]) {
+              const greekFormattedPlace = results[0]
+              const parsedAddress = parseAddressComponents(greekFormattedPlace.address_components, greekFormattedPlace.formatted_address)
+              const placeWithParsedAddress = {
+                ...place,
+                formatted_address: greekFormattedPlace.formatted_address,
+                address_components: greekFormattedPlace.address_components,
+                parsedAddress
+              }
+              setInputValue(greekFormattedPlace.formatted_address || '')
+              setInternalValue(greekFormattedPlace.formatted_address || '')
+              onChange(greekFormattedPlace.formatted_address || '', placeWithParsedAddress)
+            }
+          }
+        )
       } else if (place?.place_id) {
         const placesService = new google.maps.places.PlacesService(document.createElement('div'))
         placesService.getDetails({
           placeId: place.place_id,
           fields: ['address_components', 'formatted_address', 'geometry', 'name']
         }, (result, status) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK && result) {
-            const parsedAddress = parseAddressComponents(result.address_components, result.formatted_address)
-            const resultWithParsedAddress = {
-              ...result,
-              parsedAddress
-            }
-            setInputValue(result.formatted_address || '')
-            setInternalValue(result.formatted_address || '')
-            onChange(result.formatted_address || '', resultWithParsedAddress)
+          if (status === google.maps.places.PlacesServiceStatus.OK && result?.geometry?.location) {
+            // Get Greek formatted address using geocoder
+            geocoder.geocode(
+              { 
+                location: result.geometry.location,
+                language: 'el'
+              },
+              (results, geoStatus) => {
+                if (geoStatus === google.maps.GeocoderStatus.OK && results?.[0]) {
+                  const greekFormattedResult = results[0]
+                  const parsedAddress = parseAddressComponents(greekFormattedResult.address_components, greekFormattedResult.formatted_address)
+                  const resultWithParsedAddress = {
+                    ...result,
+                    formatted_address: greekFormattedResult.formatted_address,
+                    address_components: greekFormattedResult.address_components,
+                    parsedAddress
+                  }
+                  setInputValue(greekFormattedResult.formatted_address || '')
+                  setInternalValue(greekFormattedResult.formatted_address || '')
+                  onChange(greekFormattedResult.formatted_address || '', resultWithParsedAddress)
+                }
+              }
+            )
           }
         })
       }

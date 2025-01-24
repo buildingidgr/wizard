@@ -9,7 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
+import { Loader2, RotateCw } from "lucide-react"
 import {
   InputOTP,
   InputOTPGroup,
@@ -25,181 +25,144 @@ interface VerificationModalProps {
   onTooManyAttempts: () => void
 }
 
-export function VerificationModal({
+export const VerificationModal = ({
   isOpen,
   onClose,
   phoneNumber,
   onVerificationComplete,
   onTooManyAttempts
-}: VerificationModalProps) {
-  const [verificationCode, setVerificationCode] = useState('')
+}: VerificationModalProps) => {
+  const [code, setCode] = useState('')
+  const [isVerifying, setIsVerifying] = useState(false)
   const [isResending, setIsResending] = useState(false)
   const [resendCount, setResendCount] = useState(0)
-  const [countdown, setCountdown] = useState(0)
   const [wrongAttempts, setWrongAttempts] = useState(0)
   const [error, setError] = useState('')
   const MAX_WRONG_ATTEMPTS = 5
 
-  // Start countdown when modal opens
+  const handleSendCode = useCallback(async () => {
+    try {
+      setIsResending(true)
+      const response = await fetch('/api/send-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ phoneNumber })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to send verification code')
+      }
+
+      toast.success('Ο κωδικός στάλθηκε επιτυχώς')
+      setResendCount((prev) => prev + 1)
+    } catch (error) {
+      console.error('Error sending verification code:', error)
+      toast.error('Υπήρξε πρόβλημα κατά την αποστολή του κωδικού')
+    } finally {
+      setIsResending(false)
+    }
+  }, [phoneNumber])
+
   useEffect(() => {
     if (isOpen) {
-      // Send initial verification code when modal opens
-      handleResendCode()
-      setCountdown(60) // Start 1-minute countdown when modal opens
-    } else {
-      // Reset states when modal closes
-      setVerificationCode('')
-      setError('')
-      setWrongAttempts(0)
-      setResendCount(0)
-      setCountdown(0)
+      handleSendCode()
     }
-  }, [isOpen])
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout
-    if (countdown > 0) {
-      timer = setInterval(() => {
-        setCountdown(prev => prev - 1)
-      }, 1000)
-    }
-    return () => {
-      if (timer) clearInterval(timer)
-    }
-  }, [countdown])
+  }, [isOpen, handleSendCode])
 
   const handleVerifyCode = useCallback(async () => {
-    if (verificationCode.length !== 6) return
+    if (code.length !== 6) return
     
     setError('')
+    setIsVerifying(true)
 
     try {
       const response = await fetch('/api/verify-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber, code: verificationCode })
+        body: JSON.stringify({ phoneNumber, code })
       })
 
-      const data = await response.json()
-
-      if (data.valid) {
-        onVerificationComplete()
-      } else {
-        const newWrongAttempts = wrongAttempts + 1
-        setWrongAttempts(newWrongAttempts)
-        
-        if (newWrongAttempts >= MAX_WRONG_ATTEMPTS) {
-          toast.error('Υπέρβαση ορίου λανθασμένων προσπαθειών. Η φόρμα θα επανεκκινηθεί.')
-          onClose()
-          onTooManyAttempts()
+      if (response.ok) {
+        const data = await response.json()
+        if (data.valid) {
+          onVerificationComplete()
         } else {
-          setError(`Μη έγκυρος κωδικός επαλήθευσης. Απομένουν ${MAX_WRONG_ATTEMPTS - newWrongAttempts} προσπάθειες`)
-          setVerificationCode('')
+          const newWrongAttempts = wrongAttempts + 1
+          setWrongAttempts(newWrongAttempts)
+
+          if (newWrongAttempts >= MAX_WRONG_ATTEMPTS) {
+            onTooManyAttempts()
+            onClose()
+          } else {
+            setError(`Μη έγκυρος κωδικός επαλήθευσης. Απομένουν ${MAX_WRONG_ATTEMPTS - newWrongAttempts} προσπάθειες`)
+            setCode('')
+          }
         }
       }
     } catch {
       setError('Σφάλμα κατά την επαλήθευση του κωδικού')
-    }
-  }, [verificationCode, phoneNumber, wrongAttempts, onVerificationComplete, onClose, onTooManyAttempts, MAX_WRONG_ATTEMPTS])
-
-  const handleResendCode = async () => {
-    if (resendCount >= 3) {
-      setError('Έχετε υπερβεί το μέγιστο αριθμό προσπαθειών. Παρακαλώ δοκιμάστε αργότερα.')
-      return
-    }
-
-    setIsResending(true)
-    setError('')
-
-    try {
-      const response = await fetch('/api/send-verification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber })
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to send verification code')
-      }
-
-      setResendCount(prev => prev + 1)
-      setCountdown(60) // Reset countdown after resending
-      // Reset wrong attempts when sending new code
-      setWrongAttempts(0)
-      setVerificationCode('')
-      toast.success('Νέος κωδικός εστάλη επιτυχώς')
-    } catch (error) {
-      console.error('Error sending verification:', error)
-      setError('Σφάλμα κατά την αποστολή νέου κωδικού')
     } finally {
-      setIsResending(false)
+      setIsVerifying(false)
     }
-  }
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
+  }, [code, phoneNumber, wrongAttempts, onVerificationComplete, onClose, onTooManyAttempts])
 
   // Auto-verify when code is complete
   useEffect(() => {
-    if (verificationCode.length === 6) {
+    if (code.length === 6) {
       handleVerifyCode()
     }
-  }, [verificationCode, handleVerifyCode])
+  }, [code, handleVerifyCode])
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Επαλήθευση αριθμού τηλεφώνου</DialogTitle>
+          <DialogTitle>Επαλήθευση αριθμού</DialogTitle>
           <DialogDescription>
-            Έχουμε στείλει έναν κωδικό επαλήθευσης στο {phoneNumber}
+            Εισάγετε τον 6ψήφιο κωδικό που στάλθηκε στο {phoneNumber}
           </DialogDescription>
         </DialogHeader>
+
         <div className="space-y-4">
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex justify-center">
             <InputOTP
               maxLength={6}
-              value={verificationCode}
-              onChange={setVerificationCode}
+              value={code}
+              onChange={setCode}
+              disabled={isVerifying}
             >
               <InputOTPGroup>
-                <InputOTPSlot index={0} className={wrongAttempts > 0 ? "border-red-500" : ""} />
-                <InputOTPSlot index={1} className={wrongAttempts > 0 ? "border-red-500" : ""} />
-                <InputOTPSlot index={2} className={wrongAttempts > 0 ? "border-red-500" : ""} />
-                <InputOTPSlot index={3} className={wrongAttempts > 0 ? "border-red-500" : ""} />
-                <InputOTPSlot index={4} className={wrongAttempts > 0 ? "border-red-500" : ""} />
-                <InputOTPSlot index={5} className={wrongAttempts > 0 ? "border-red-500" : ""} />
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
               </InputOTPGroup>
             </InputOTP>
-            {error && (
-              <p className="text-sm text-red-500 text-center">{error}</p>
-            )}
           </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-col gap-1">
-              <Button
-                variant="outline"
-                onClick={handleResendCode}
-                disabled={isResending || countdown > 0 || resendCount >= 3}
-              >
-                {isResending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {countdown > 0 
-                  ? `Περιμένετε ${formatTime(countdown)} για νέο κωδικό`
-                  : resendCount >= 3
-                    ? 'Υπέρβαση ορίου αποστολής κωδικών'
-                    : 'Αποστολή νέου κωδικού'
-                }
-              </Button>
-              {resendCount > 0 && resendCount < 3 && (
-                <p className="text-xs text-muted-foreground text-center">
-                  Απομένουν {3 - resendCount} προσπάθειες αποστολής νέου κωδικού
-                </p>
+
+          {error && (
+            <p className="text-sm text-destructive text-center">{error}</p>
+          )}
+
+          <div className="flex justify-center">
+            <Button
+              variant="link"
+              className="text-sm text-muted-foreground"
+              disabled={isResending || resendCount >= 3}
+              onClick={handleSendCode}
+            >
+              {isResending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <RotateCw className="mr-2 h-4 w-4" />
               )}
-            </div>
+              Αποστολή νέου κωδικού
+              {resendCount > 0 && ` (${3 - resendCount})`}
+            </Button>
           </div>
         </div>
       </DialogContent>

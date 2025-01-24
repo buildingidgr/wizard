@@ -22,7 +22,7 @@ export const loadGoogleMapsScript = (apiKey: string): Promise<void> => {
         throw new Error('Google Maps API key is required');
       }
       
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places&callback=initGoogleMaps`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places&language=el&region=GR&callback=initGoogleMaps`;
       script.async = true;
       script.defer = true;
       script.onerror = () => {

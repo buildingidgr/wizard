@@ -4,11 +4,13 @@ interface WizardSummaryProps {
   currentStep: number
   selectedCategory: string
   address: string
+  projectTitle: string
   additionalInfo: string
   contactDetails: {
     fullName: string
     email: string
     phone: string
+    countryCode: string
   }
 }
 
@@ -16,6 +18,7 @@ export function WizardSummary({
   currentStep,
   selectedCategory,
   address,
+  projectTitle,
   additionalInfo,
   contactDetails,
 }: WizardSummaryProps) {
@@ -44,13 +47,23 @@ export function WizardSummary({
           </div>
         )}
 
-        {currentStep > 3 && additionalInfo && (
+        {currentStep > 3 && (projectTitle || additionalInfo) && (
           <div className="space-y-2">
             <h3 className="text-sm font-medium text-muted-foreground">Περιγραφή Έργου</h3>
-            <p className="flex items-start gap-2 text-foreground">
-              <CheckCircle2 className="h-4 w-4 text-primary mt-1" />
-              <span className="text-sm">{additionalInfo}</span>
-            </p>
+            <div className="flex flex-col gap-2">
+              {projectTitle && (
+                <p className="flex items-start gap-2 text-foreground">
+                  <CheckCircle2 className="h-4 w-4 text-primary mt-1" />
+                  <span className="font-medium">{projectTitle}</span>
+                </p>
+              )}
+              {additionalInfo && (
+                <p className="flex items-start gap-2 text-foreground">
+                  <CheckCircle2 className="h-4 w-4 text-primary mt-1" />
+                  <span className="text-sm">{additionalInfo}</span>
+                </p>
+              )}
+            </div>
           </div>
         )}
 

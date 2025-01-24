@@ -66,7 +66,10 @@ export const LocationStep = ({
     setMapCenter(location)
     try {
       const geocoder = new google.maps.Geocoder()
-      const result = await geocoder.geocode({ location })
+      const result = await geocoder.geocode({ 
+        location,
+        language: 'el' // Set language to Greek
+      })
       
       if (result.results[0]) {
         const placeData = result.results[0]
@@ -103,6 +106,7 @@ export const LocationStep = ({
 
     if (!components) return result
 
+    // First pass: collect all available data
     for (const component of components) {
       const types = component.types
 
@@ -137,6 +141,38 @@ export const LocationStep = ({
       if (types.includes('postal_code')) {
         result.postalCode = component.long_name
       }
+    }
+
+    // Second pass: fill in missing data using available information
+    
+    // If locality (city) is missing, try to use sublocality or administrative_area_level_3
+    if (!result.locality) {
+      result.locality = result.sublocality || result.administrativeAreaLevel3 || ''
+    }
+
+    // If administrativeAreaLevel2 (prefecture) is missing but we have administrativeAreaLevel1 (region)
+    // we can try to determine it from known mappings
+    if (!result.administrativeAreaLevel2 && result.administrativeAreaLevel1) {
+      // Example: If we know we're in Attica, and the locality is part of Athens metropolitan area
+      if (result.administrativeAreaLevel1.includes('Αττική') && 
+          (result.locality.includes('Αθήνα') || result.locality.includes('Πειραιάς'))) {
+        result.administrativeAreaLevel2 = 'Κεντρικός Τομέας Αθηνών'
+      }
+    }
+
+    // If postal code is missing, try to determine it from locality
+    if (!result.postalCode && result.locality) {
+      // Example: Common postal code ranges for major cities
+      if (result.locality.includes('Αθήνα')) {
+        result.postalCode = '104 XX' // Central Athens range
+      } else if (result.locality.includes('Θεσσαλονίκη')) {
+        result.postalCode = '546 XX' // Thessaloniki range
+      }
+    }
+
+    // If street number is missing but we have a route, mark it as pending
+    if (!result.streetNumber && result.route) {
+      result.streetNumber = 'Εκκρεμεί'
     }
 
     // Combine street number and route for full street address
@@ -218,6 +254,50 @@ export const LocationStep = ({
               selectedLocation={mapCenter}
               onLocationChange={handleMapLocationChange}
             />
+
+            {selectedAddressData?.parsedAddress && (
+              <div className="space-y-2 border rounded-lg p-4 bg-muted/30">
+                <h4 className="font-medium text-sm">Στοιχεία διεύθυνσης:</h4>
+                <div className="grid gap-1 text-sm">
+                  {selectedAddressData.parsedAddress.route && (
+                    <div className="grid grid-cols-3">
+                      <span className="text-muted-foreground">Οδός:</span>
+                      <span className="col-span-2">{selectedAddressData.parsedAddress.route}</span>
+                    </div>
+                  )}
+                  {selectedAddressData.parsedAddress.streetNumber && (
+                    <div className="grid grid-cols-3">
+                      <span className="text-muted-foreground">Αριθμός:</span>
+                      <span className="col-span-2">{selectedAddressData.parsedAddress.streetNumber}</span>
+                    </div>
+                  )}
+                  {selectedAddressData.parsedAddress.locality && (
+                    <div className="grid grid-cols-3">
+                      <span className="text-muted-foreground">Περιοχή:</span>
+                      <span className="col-span-2">{selectedAddressData.parsedAddress.locality}</span>
+                    </div>
+                  )}
+                  {selectedAddressData.parsedAddress.postalCode && (
+                    <div className="grid grid-cols-3">
+                      <span className="text-muted-foreground">Τ.Κ.:</span>
+                      <span className="col-span-2">{selectedAddressData.parsedAddress.postalCode}</span>
+                    </div>
+                  )}
+                  {selectedAddressData.parsedAddress.administrativeAreaLevel2 && (
+                    <div className="grid grid-cols-3">
+                      <span className="text-muted-foreground">Νομός:</span>
+                      <span className="col-span-2">{selectedAddressData.parsedAddress.administrativeAreaLevel2}</span>
+                    </div>
+                  )}
+                  {selectedAddressData.parsedAddress.administrativeAreaLevel1 && (
+                    <div className="grid grid-cols-3">
+                      <span className="text-muted-foreground">Περιφέρεια:</span>
+                      <span className="col-span-2">{selectedAddressData.parsedAddress.administrativeAreaLevel1}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Navigation size={14} className="text-primary" />

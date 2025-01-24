@@ -14,6 +14,7 @@ interface ProjectData {
       }
     }
     details: {
+      title: string
       description: string
     }
   }
@@ -47,6 +48,7 @@ interface UnknownProjectData {
       }
     }
     details?: {
+      title?: unknown
       description?: unknown
     }
   }
@@ -75,6 +77,7 @@ function validateProjectData(data: UnknownProjectData): data is ProjectData {
     if (typeof data.project.location?.address !== 'string') return false;
     if (typeof data.project.location?.coordinates?.lat !== 'number') return false;
     if (typeof data.project.location?.coordinates?.lng !== 'number') return false;
+    if (typeof data.project.details?.title !== 'string') return false;
     if (typeof data.project.details?.description !== 'string') return false;
 
     // Validate contact

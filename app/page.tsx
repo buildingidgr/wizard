@@ -1,4 +1,6 @@
-import ProjectWizard from '@/components/ProjectWizard'
+"use client"
+
+import { ProjectWizard } from '@/components/ProjectWizard'
 
 export default function Home() {
   return (

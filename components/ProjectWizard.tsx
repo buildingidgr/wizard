@@ -1,40 +1,21 @@
 "use client"
 
 import { useState } from 'react'
-import { IntroStep } from '@/components/wizard/steps/IntroStep'
+import { toast } from 'react-hot-toast'
+import { parsePhoneNumber } from 'libphonenumber-js'
+import type { CountryCode } from 'libphonenumber-js'
 import { CategoryStep } from '@/components/wizard/steps/CategoryStep'
 import { LocationStep } from '@/components/wizard/steps/LocationStep'
 import { ProjectInfoStep } from '@/components/wizard/steps/ProjectInfoStep'
 import { ContactStep } from '@/components/wizard/steps/ContactStep'
 import { ConfirmationStep } from '@/components/wizard/steps/ConfirmationStep'
 import { SuccessStep } from '@/components/wizard/steps/SuccessStep'
-import { GoogleMapsProvider } from '@/components/providers/GoogleMapsProvider'
 import { WizardSummary } from '@/components/wizard/WizardSummary'
 import { WizardBranding } from '@/components/wizard/WizardBranding'
+import { GoogleMapsProvider } from '@/components/providers/GoogleMapsProvider'
 import { cn } from '@/lib/utils'
 
-interface AddressComponents {
-  streetNumber: string;
-  route: string;
-  streetAddress: string;
-  subpremise: string;
-  locality: string;
-  sublocality: string;
-  administrativeAreaLevel1: string;
-  administrativeAreaLevel2: string;
-  administrativeAreaLevel3: string;
-  country: string;
-  countryCode: string;
-  postalCode: string;
-  formattedAddress: string;
-}
-
-type ExtendedPlaceResult = google.maps.places.PlaceResult & {
-  parsedAddress?: AddressComponents;
-};
-
 const categories = [
-
   {
     id: "construction",
     title: "Κατασκευές",
@@ -79,48 +60,90 @@ const categories = [
   }
 ]
 
-export default function ProjectWizard() {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [selectedCategory, setSelectedCategory] = useState('')
-  const [address, setAddress] = useState('')
-  const [selectedAddressData, setSelectedAddressData] = useState<ExtendedPlaceResult | null>(null)
-  const [additionalInfo, setAdditionalInfo] = useState('')
-  const [contactDetails, setContactDetails] = useState({
+interface ContactDetails {
+  fullName: string;
+  email: string;
+  phone: string;
+  countryCode: string;
+}
+
+export const ProjectWizard = () => {
+  const [currentStep, setCurrentStep] = useState(1)
+  const [selectedCategory, setSelectedCategory] = useState<string>('')
+  const [selectedAddressData, setSelectedAddressData] = useState<google.maps.places.PlaceResult | null>(null)
+  const [projectTitle, setProjectTitle] = useState<string>('')
+  const [additionalInfo, setAdditionalInfo] = useState<string>('')
+  const [contactDetails, setContactDetails] = useState<ContactDetails>({
     fullName: '',
     email: '',
     phone: '',
     countryCode: '+30'
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleContinue = () => {
-    setCurrentStep(prev => prev + 1)
+  const handleContinue = async () => {
+    if (currentStep === 5) {
+      try {
+        setIsSubmitting(true)
+        
+        // Parse the phone number to get the actual country code
+        const phoneNumber = parsePhoneNumber(contactDetails.phone, 'GR' as CountryCode)
+        const actualCountryCode = phoneNumber ? phoneNumber.countryCallingCode : '30' // Default to Greece if parsing fails
+        
+        const submissionData = {
+          project: {
+            category: selectedCategory,
+            location: {
+              address: selectedAddressData?.formatted_address || '',
+              lat: selectedAddressData?.geometry?.location?.lat() || 0,
+              lng: selectedAddressData?.geometry?.location?.lng() || 0,
+              parsedAddress: {} // We'll handle address parsing in the API
+            },
+            details: {
+              title: projectTitle,
+              description: additionalInfo
+            }
+          },
+          contact: {
+            ...contactDetails,
+            countryCode: `+${actualCountryCode}`
+          }
+        }
+
+        const response = await fetch('/api/webhook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(submissionData)
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to submit form')
+        }
+
+        setCurrentStep(6) // Move to success step
+      } catch (error) {
+        console.error('Form submission error:', error)
+        toast.error('Υπήρξε ένα πρόβλημα κατά την υποβολή. Παρακαλώ δοκιμάστε ξανά.')
+      } finally {
+        setIsSubmitting(false)
+      }
+      return
+    }
+
+    setCurrentStep((prev) => prev + 1)
   }
 
   const handleBack = () => {
-    setCurrentStep(prev => prev - 1)
-  }
-
-  const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category)
-  }
-
-  const handleAddressChange = (value: string, placeData?: ExtendedPlaceResult) => {
-    setAddress(value)
-    setSelectedAddressData(placeData || null)
-  }
-
-  const handleInfoChange = (info: string) => {
-    setAdditionalInfo(info)
-  }
-
-  const handleContactDetailsChange = (details: typeof contactDetails) => {
-    setContactDetails(details)
+    setCurrentStep((prev) => prev - 1)
   }
 
   const handleReset = () => {
+    setCurrentStep(1)
     setSelectedCategory('')
-    setAddress('')
     setSelectedAddressData(null)
+    setProjectTitle('')
     setAdditionalInfo('')
     setContactDetails({
       fullName: '',
@@ -128,69 +151,23 @@ export default function ProjectWizard() {
       phone: '',
       countryCode: '+30'
     })
-    setCurrentStep(0)
   }
 
-  const renderStep = () => {
-    switch (currentStep) {
-      case 0:
-        return <IntroStep onContinue={handleContinue} />
-      case 1:
-        return (
-          <CategoryStep
-            selectedCategory={selectedCategory}
-            onCategorySelect={handleCategorySelect}
-            onContinue={handleContinue}
-            onBack={handleBack}
-            categories={categories}
-          />
-        )
-      case 2:
-        return (
-          <LocationStep
-            address={address}
-            selectedAddressData={selectedAddressData}
-            onAddressChange={handleAddressChange}
-            onContinue={handleContinue}
-            onBack={handleBack}
-          />
-        )
-      case 3:
-        return (
-          <ProjectInfoStep
-            additionalInfo={additionalInfo}
-            onInfoChange={handleInfoChange}
-            onContinue={handleContinue}
-            onBack={handleBack}
-          />
-        )
-      case 4:
-        return (
-          <ContactStep
-            contactDetails={contactDetails}
-            onContactDetailsChange={handleContactDetailsChange}
-            onContinue={handleContinue}
-            onBack={handleBack}
-          />
-        )
-      case 5:
-        return (
-          <ConfirmationStep
-            selectedCategory={selectedCategory}
-            address={address}
-            additionalInfo={additionalInfo}
-            contactDetails={contactDetails}
-            onConfirm={handleContinue}
-            onBack={handleBack}
-            onReset={handleReset}
-            categories={categories}
-          />
-        )
-      case 6:
-        return <SuccessStep onReset={handleReset} />
-      default:
-        return null
-    }
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category)
+  }
+
+  const handleAddressChange = (value: string, placeData?: google.maps.places.PlaceResult) => {
+    setSelectedAddressData(placeData || null)
+  }
+
+  const handleInfoChange = (title: string, info: string) => {
+    setProjectTitle(title)
+    setAdditionalInfo(info)
+  }
+
+  const handleContactChange = (details: ContactDetails) => {
+    setContactDetails(details)
   }
 
   return (
@@ -209,20 +186,67 @@ export default function ProjectWizard() {
             {/* Main wizard content */}
             <div className={cn(
               "bg-card rounded-lg p-6",
-              selectedCategory || address || additionalInfo || contactDetails.fullName
+              selectedCategory || selectedAddressData?.formatted_address || additionalInfo || contactDetails.fullName
                 ? "lg:col-span-6"
                 : "lg:col-span-10"
             )}>
-              {renderStep()}
+              {currentStep === 1 && (
+                <CategoryStep
+                  selectedCategory={selectedCategory}
+                  onCategorySelect={handleCategorySelect}
+                  onContinue={handleContinue}
+                  onBack={handleBack}
+                  categories={categories}
+                />
+              )}
+              {currentStep === 2 && (
+                <LocationStep
+                  selectedAddressData={selectedAddressData}
+                  onAddressChange={handleAddressChange}
+                  onContinue={handleContinue}
+                  onBack={handleBack}
+                  address={selectedAddressData?.formatted_address || ''}
+                />
+              )}
+              {currentStep === 3 && (
+                <ProjectInfoStep
+                  projectTitle={projectTitle}
+                  additionalInfo={additionalInfo}
+                  onInfoChange={handleInfoChange}
+                  onContinue={handleContinue}
+                  onBack={handleBack}
+                />
+              )}
+              {currentStep === 4 && (
+                <ContactStep
+                  contactDetails={contactDetails}
+                  onContactDetailsChange={handleContactChange}
+                  onContinue={handleContinue}
+                  onBack={handleBack}
+                />
+              )}
+              {currentStep === 5 && (
+                <ConfirmationStep
+                  contactDetails={contactDetails}
+                  onConfirm={handleContinue}
+                  onBack={handleBack}
+                  onReset={handleReset}
+                  isSubmitting={isSubmitting}
+                />
+              )}
+              {currentStep === 6 && (
+                <SuccessStep onReset={handleReset} />
+              )}
             </div>
-            
+
             {/* Progress summary on the right */}
-            {(selectedCategory || address || additionalInfo || contactDetails.fullName) && (
+            {(selectedCategory || selectedAddressData?.formatted_address || additionalInfo || contactDetails.fullName) && (
               <div className="lg:col-span-4 lg:sticky lg:top-28 bg-card rounded-lg p-6">
                 <WizardSummary
                   currentStep={currentStep}
                   selectedCategory={selectedCategory}
-                  address={address}
+                  address={selectedAddressData?.formatted_address || ''}
+                  projectTitle={projectTitle}
                   additionalInfo={additionalInfo}
                   contactDetails={contactDetails}
                 />

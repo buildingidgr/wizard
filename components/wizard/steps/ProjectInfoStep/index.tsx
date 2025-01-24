@@ -5,20 +5,24 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft } from "lucide-react"
 import { ProgressSteps } from "../../shared/ProgressSteps"
+import { Input } from "@/components/ui/input"
 
 interface ProjectInfoStepProps {
+  projectTitle: string
   additionalInfo: string
-  onInfoChange: (info: string) => void
+  onInfoChange: (title: string, info: string) => void
   onContinue: () => void
   onBack: () => void
 }
 
 export const ProjectInfoStep = ({
+  projectTitle,
   additionalInfo,
   onInfoChange,
   onContinue,
   onBack
 }: ProjectInfoStepProps) => {
+  const [localTitle, setLocalTitle] = useState(projectTitle)
   const [localInfo, setLocalInfo] = useState(additionalInfo)
   const [wordCount, setWordCount] = useState(() => additionalInfo.trim().split(/\s+/).filter(Boolean).length)
 
@@ -28,7 +32,7 @@ export const ProjectInfoStep = ({
   }
 
   const handleSubmit = () => {
-    onInfoChange(localInfo)
+    onInfoChange(localTitle, localInfo)
     onContinue()
   }
 
@@ -46,6 +50,19 @@ export const ProjectInfoStep = ({
             </h1>
           </div>
           <div className="space-y-4">
+            <div className="space-y-2">
+              <Input
+                placeholder="Τίτλος έργου"
+                value={localTitle}
+                onChange={(e) => setLocalTitle(e.target.value)}
+                maxLength={100}
+              />
+              <div className="flex justify-end">
+                <p className={`text-sm ${localTitle.length >= 100 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  {localTitle.length}/100 χαρακτήρες
+                </p>
+              </div>
+            </div>
             <Textarea
               placeholder="Περιγράψτε τις απαιτήσεις του έργου σας..."
               value={localInfo}
@@ -61,15 +78,15 @@ export const ProjectInfoStep = ({
                   {wordCount} {wordCount === 1 ? 'λέξη' : 'λέξεις'}
                 </p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Περιγράψτε με λεπτομέρειες τις απαιτήσεις του έργου σας. Για παράδειγμα: &quot;Χρειάζομαι έναν μηχανικό για την επίβλεψη ανακαίνισης διαμερίσματος 80τμ&quot;
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Περιγράψτε με λεπτομέρεια το έργο σας. Η περιγραφή θα πρέπει να είναι τουλάχιστον 10 λέξεις. Για παράδειγμα: &ldquo;Θέλω να ανακαινίσω το μπάνιο του σπιτιού μου που βρίσκεται στην Αθήνα&rdquo;
               </p>
             </div>
           </div>
           <div className="flex gap-4">
             <Button 
               onClick={handleSubmit}
-              disabled={!localInfo.trim() || wordCount < 10}
+              disabled={!localTitle.trim() || !localInfo.trim() || wordCount < 10}
               className="w-full"
               size="lg"
             >
