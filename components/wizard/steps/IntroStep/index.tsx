@@ -15,15 +15,17 @@ export const IntroStep = ({ onContinue }: IntroStepProps) => {
   const [hasAgreed, setHasAgreed] = useState(false)
 
   return (
-    <StepContainer>
+    <StepContainer className="max-w-3xl mx-auto">
       <Card className="w-full space-y-6 p-4 sm:p-6 md:p-8">
         <IntroContent />
-        <StepNavigation 
-          onContinue={onContinue} 
-          continueText="Έναρξη Καταχώρησης" 
-          disabled={!hasAgreed}
-        />
-        <IntroFooter onAgreementChange={setHasAgreed} />
+        <div className="space-y-4">
+          <IntroFooter onAgreementChange={setHasAgreed} />
+          <StepNavigation 
+            onContinue={onContinue} 
+            continueText="Έναρξη Καταχώρησης" 
+            disabled={!hasAgreed}
+          />
+        </div>
       </Card>
     </StepContainer>
   )
