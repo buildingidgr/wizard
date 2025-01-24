@@ -91,6 +91,44 @@ export const ProjectWizard = () => {
         const phoneNumber = parsePhoneNumber(contactDetails.phone, 'GR' as CountryCode)
         const actualCountryCode = phoneNumber ? phoneNumber.countryCallingCode : '30' // Default to Greece if parsing fails
         
+        // Extract address components from the place result
+        const addressComponents = selectedAddressData?.address_components?.reduce((acc, component) => {
+          const types = component.types[0]
+          switch (types) {
+            case 'street_number':
+              acc.streetNumber = component.long_name
+              break
+            case 'route':
+              acc.street = component.long_name
+              break
+            case 'administrative_area_level_3':
+              acc.area = component.long_name
+              break
+            case 'sublocality':
+            case 'sublocality_level_1':
+            case 'neighborhood':
+              // Only set if area is not already set by administrative_area_level_3
+              if (!acc.area) {
+                acc.area = component.long_name
+              }
+              break
+            case 'locality':
+              acc.city = component.long_name
+              break
+            case 'administrative_area_level_1':
+              acc.region = component.long_name
+              break
+            case 'postal_code':
+              acc.postalCode = component.long_name
+              break
+            case 'country':
+              acc.country = component.long_name
+              acc.countryCode = component.short_name // ISO format (e.g., 'GR')
+              break
+          }
+          return acc
+        }, {} as Record<string, string>)
+
         const submissionData = {
           project: {
             category: selectedCategory,
@@ -98,7 +136,10 @@ export const ProjectWizard = () => {
               address: selectedAddressData?.formatted_address || '',
               lat: selectedAddressData?.geometry?.location?.lat() || 0,
               lng: selectedAddressData?.geometry?.location?.lng() || 0,
-              parsedAddress: {} // We'll handle address parsing in the API
+              parsedAddress: {
+                ...addressComponents,
+                area: addressComponents?.area || addressComponents?.city || '' // Fallback to city if no area is found
+              }
             },
             details: {
               title: projectTitle,
