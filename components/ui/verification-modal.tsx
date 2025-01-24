@@ -43,7 +43,9 @@ export const VerificationModal = ({
   const handleSendCode = useCallback(async () => {
     try {
       setIsResending(true)
-      const response = await fetch('/api/send-code', {
+      setError('')
+      
+      const response = await fetch('/api/send-verification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -51,14 +53,21 @@ export const VerificationModal = ({
         body: JSON.stringify({ phoneNumber })
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error('Failed to send verification code')
+        throw new Error(data.error || 'Failed to send verification code')
       }
 
-      toast.success('Ο κωδικός στάλθηκε επιτυχώς')
-      setResendCount((prev) => prev + 1)
+      if (data.success) {
+        toast.success('Ο κωδικός στάλθηκε επιτυχώς')
+        setResendCount((prev) => prev + 1)
+      } else {
+        throw new Error(data.error || 'Failed to send verification code')
+      }
     } catch (error) {
       console.error('Error sending verification code:', error)
+      setError('Υπήρξε πρόβλημα κατά την αποστολή του κωδικού')
       toast.error('Υπήρξε πρόβλημα κατά την αποστολή του κωδικού')
     } finally {
       setIsResending(false)
@@ -68,6 +77,12 @@ export const VerificationModal = ({
   useEffect(() => {
     if (isOpen) {
       handleSendCode()
+    } else {
+      // Reset state when modal closes
+      setCode('')
+      setError('')
+      setWrongAttempts(0)
+      setResendCount(0)
     }
   }, [isOpen, handleSendCode])
 

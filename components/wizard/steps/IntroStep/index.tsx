@@ -16,7 +16,7 @@ export const IntroStep = ({ onContinue }: IntroStepProps) => {
 
   return (
     <StepContainer>
-      <Card className="w-full space-y-6 p-4 sm:p-6">
+      <Card className="w-full space-y-6 p-4 sm:p-6 md:p-8">
         <IntroContent />
         <StepNavigation 
           onContinue={onContinue} 

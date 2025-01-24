@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 import { parsePhoneNumber } from 'libphonenumber-js'
 import type { CountryCode } from 'libphonenumber-js'
 import { IntroStep } from '@/components/wizard/steps/IntroStep'
