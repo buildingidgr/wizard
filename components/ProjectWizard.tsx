@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { parsePhoneNumber } from 'libphonenumber-js'
 import type { CountryCode } from 'libphonenumber-js'
+import { IntroStep } from '@/components/wizard/steps/IntroStep'
 import { CategoryStep } from '@/components/wizard/steps/CategoryStep'
 import { LocationStep } from '@/components/wizard/steps/LocationStep'
 import { ProjectInfoStep } from '@/components/wizard/steps/ProjectInfoStep'
@@ -68,7 +69,7 @@ interface ContactDetails {
 }
 
 export const ProjectWizard = () => {
-  const [currentStep, setCurrentStep] = useState(1)
+  const [currentStep, setCurrentStep] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [selectedAddressData, setSelectedAddressData] = useState<google.maps.places.PlaceResult | null>(null)
   const [projectTitle, setProjectTitle] = useState<string>('')
@@ -140,7 +141,7 @@ export const ProjectWizard = () => {
   }
 
   const handleReset = () => {
-    setCurrentStep(1)
+    setCurrentStep(0)
     setSelectedCategory('')
     setSelectedAddressData(null)
     setProjectTitle('')
@@ -190,6 +191,9 @@ export const ProjectWizard = () => {
                 ? "lg:col-span-6"
                 : "lg:col-span-10"
             )}>
+              {currentStep === 0 && (
+                <IntroStep onContinue={handleContinue} />
+              )}
               {currentStep === 1 && (
                 <CategoryStep
                   selectedCategory={selectedCategory}
@@ -240,7 +244,7 @@ export const ProjectWizard = () => {
             </div>
 
             {/* Progress summary on the right */}
-            {(selectedCategory || selectedAddressData?.formatted_address || additionalInfo || contactDetails.fullName) && (
+            {currentStep > 0 && currentStep < 6 && (
               <div className="lg:col-span-4 lg:sticky lg:top-28 bg-card rounded-lg p-6">
                 <WizardSummary
                   currentStep={currentStep}
