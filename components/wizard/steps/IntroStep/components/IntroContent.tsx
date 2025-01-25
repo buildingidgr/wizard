@@ -7,7 +7,6 @@ import {
   Users,
   Calendar,
   MessageCircle,
-  CheckCircle2,
   CircleDot
 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
